@@ -1,0 +1,54 @@
+load ("sundial_gendecls_go.mac");
+load ("sundial_funcdecls_go.mac");
+
+defstruct(PointWithHour(hour = 0, H = 0,X = 0,Y = 0, tanA = 0, cotA = 0))$
+
+HorizontalByDeclination(φ,a):=block([lines:[],center:new(Point),u:0],
+                        returning(block([cφ,sφ,tφ],[sφ,cφ]:Sincos[go_type_of(φ)](φ)(),tφ:sφ/cφ,
+                                        for j from 0 thru length(m)-1 do
+                                            continuing(block([d:m[j+1]],
+                                                             block([l],
+                                                                   l:block([x:new(LineWithDeclination)],x@Declination:unit@AngleFromDeg(d),
+                                                                           x@Description:descriptions[j+1],x),
+                                                                   for i from 0 unless i >= 48 do
+                                                                       continuing(
+                                                                       block([H,aH,cH,sH,tδ,H0,Q,x,y,tanA,cotA],
+                                                                             H:(float64(i/2-12)*math@Pi)/12,
+                                                                             aH:math@Abs(H),[sH,cH]:math@Sincos(H),
+                                                                             tδ:math@Tan((d*math@Pi)/180),H0:math@Acos(-(tδ*tφ)),
+                                                                             if aH > H0 then block(throw(continue)),Q:sφ*tδ+cH*cφ,
+                                                                             x:(a*sH)/Q,y:(a*(cH*sφ-cφ*tδ))/Q,
+                                                                             tanA: if equal (y, 0) then if x < 0 then minf elseif x > 0 then inf else und else x/y,
+                                                                             cotA: if equal (x, 0) then if y < 0 then minf elseif y > 0 then inf else und else y/x,
+                                                                             l@Points:builtin@append(l@Points,PointWithHour(i/2, H, x, y, tanA, cotA)))),
+                                                                   if len(l@Points) > 0 then block(lines:builtin@append(lines,l))))),
+                                        center@Y:-(a/tφ),u:a/math@Abs(sφ),throw('return(null)))),
+                        if %% # null then %% else [lines,center,u])$
+
+sunrise_hour_angle(φ, δ) := acos (-(tan(δ)*tan(φ)));
+
+hour_angle_for_azimuth (φ, δ, A) :=
+    if equal (A, 0) then 0
+        elseif A > 0 then hour_angle_for_azimuth1 (φ, δ, A)
+        else - hour_angle_for_azimuth1 (φ, δ, - A);
+
+/* assume A > 0 here */
+hour_angle_for_azimuth1 (φ, δ, A) :=
+    if equal (A, %pi)
+        then %pi
+        else block ([H, y1],
+                    y1: cos(H)*sin(φ)-cos(φ)*tan(δ),
+                    if equal (A, %pi/2) then find_root (y1, H, 0.001, %pi - 0.001)
+                        else block ([x, y, Q],
+                                    Q:sin(φ)*tan(δ)+cos(H)*cos(φ),
+                                    x:sin(H)/Q,
+                                    y:y1/Q,
+                                    find_root (y/x = cot(A), H, 0.001, %pi - 0.001)));
+
+earth_coords_for_gnomon_shadow (φ, δ, H) :=
+    block ([x, y1, y, Q],
+           Q:sin(φ)*tan(δ)+cos(H)*cos(φ),
+           x:sin(H)/Q,
+           y1: cos(H)*sin(φ)-cos(φ)*tan(δ),
+           y:y1/Q,
+           Point (x, y));

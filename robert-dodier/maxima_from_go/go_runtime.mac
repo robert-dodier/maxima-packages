@@ -54,6 +54,10 @@ tellsimpafter (float64 (HourAngle (aa)), aa);
 tellsimpafter (float64 (RA (aa)), aa);
 tellsimpafter (float64 (Time (aa)), aa);
 
+tellsimpafter (sin (Angle (aa)), sin (aa));
+tellsimpafter (cos (Angle (aa)), cos (aa));
+tellsimpafter (tan (Angle (aa)), tan (aa));
+
 /* I wonder if this needs to be expanded to other types of arguments ?? */
 matchdeclare (nn, numberp);
 tellsimpafter (float64 (nn), nn);
