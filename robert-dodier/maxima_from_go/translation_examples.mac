@@ -18,81 +18,6 @@ FromSexa ("-", hh, mm, ss);
 
 kill (FromSexa, FromSexaSec);
 
-unit_blobs: read_json ("unit1.json");
-unit_decls: unit_blobs // "Decls" $
-unit_results: map (apply_all_rules, unit_decls) $
-
-print ("output results from apply_all_rules on unit_decls to unit_go.mac.") $
-
-with_stdout ("unit_go.mac",
-    for results in unit_results
-        do (print (""),
-            grind (last (results)),
-            print ("")));
-
-print ("found", length (methods_list), "methods in unit1.json:", reverse (methods_list));
-
-solar_blobs: read_json ("solar1.json");
-solar_decls: solar_blobs // "Decls" $
-solar_results: map (apply_all_rules, solar_decls);
-
-print ("output results from apply_all_rules on solar_decls to solar_go.mac.") $
-
-with_stdout ("solar_go.mac",
-    for results in solar_results
-        do (print (""),
-            grind (last (results)),
-            print ("")));
-
-nutation_blobs: read_json ("nutation1.json");
-nutation_decls: nutation_blobs // "Decls" $
-nutation_results: map (apply_all_rules, nutation_decls);
-
-print ("output results from apply_all_rules on nutation_decls to nutation_go.mac.") $
-
-with_stdout ("nutation_go.mac",
-    for results in nutation_results
-        do (print (""),
-            grind (last (results)),
-            print ("")));
-
-sundial_blobs: read_json ("sundial1.json") $
-sundial_decls: sundial_blobs // "Decls" $
-sundial_decls_gendecls: sublist (sundial_decls, lambda ([b], (b // "NodeType") = "GenDecl")) $
-sundial_decls_funcdecls: sublist (sundial_decls, lambda ([b], (b // "NodeType") = "FuncDecl")) $
-sundial_decls_other: sublist (sundial_decls, lambda ([b], (b // "NodeType") # "GenDecl" and (b // "NodeType") # "FuncDecl")) $
-
-print ("length sundial_decls_gendecls -->", length (sundial_decls_gendecls));
-print ("length sundial_decls_funcdecls -->", length (sundial_decls_funcdecls));
-print ("length sundial_decls_other -->", length (sundial_decls_other));
-
-print ("output results from apply_all_rules on sundial_decls_gendecls to sundial_gendecls_go.mac.") $
-
-with_stdout ("sundial_gendecls_go.mac",
-    for b in sundial_decls_gendecls
-        do block ([r: apply_all_rules (b)],
-                  print (""),
-                  grind (last (r)),
-                  print ("")));
-
-print ("output results from apply_all_rules on sundial_decls_other to sundial_other_go.mac.") $
-
-with_stdout ("sundial_other_go.mac",
-    for b in sundial_decls_other
-        do block ([r: apply_all_rules (b)],
-                  print (""),
-                  grind (last (r)),
-                  print ("")));
-
-print ("output results from apply_all_rules on sundial_decls_funcdecls to sundial_funcdecls_go.mac.") $
-
-with_stdout ("sundial_funcdecls_go.mac",
-    for b in sundial_decls_funcdecls
-        do block ([r: apply_all_rules (b)],
-                  print (""),
-                  grind (last (r)),
-                  print ("")));
-
 /*
 debugmode (true);
 
@@ -103,3 +28,53 @@ for i thru length (sundial_decls_funcdecls)
               grind (last (r)),
               print (""));
  */
+
+translate_from_go_json (name) := 
+    block ([blobs, decls, decls_gendecls, decls_funcdecls, decls_others,
+            name_input, name_output_gendecls, name_output_funcdecls, name_output_other], 
+           name_input: sconcat (name, "1.json"),
+           name_output_gendecls: sconcat (name, "_gendecls_go.mac"),
+           name_output_funcdecls: sconcat (name, "_funcdecls_go.mac"),
+           name_output_other: sconcat (name, "_other_go.mac"),
+
+           blobs: read_json (name_input),
+           decls: blobs // "Decls",
+           decls_gendecls: sublist (decls, lambda ([b], (b // "NodeType") = "GenDecl")),
+           decls_funcdecls: sublist (decls, lambda ([b], (b // "NodeType") = "FuncDecl")),
+           decls_other: sublist (decls, lambda ([b], (b // "NodeType") # "GenDecl" and (b // "NodeType") # "FuncDecl")),
+
+           print ("length decls_gendecls -->", length (decls_gendecls)),
+           print ("length decls_funcdecls -->", length (decls_funcdecls)),
+           print ("length decls_other -->", length (decls_other)),
+
+           print ("output results from apply_all_rules on decls_gendecls to", name_output_gendecls),
+
+           with_stdout (name_output_gendecls,
+               for b in decls_gendecls
+                   do block ([r: apply_all_rules (b)],
+                             print (""),
+                             grind (last (r)),
+                             print (""))),
+
+           print ("output results from apply_all_rules on decls_other to", name_output_other),
+
+           with_stdout (name_output_other,
+               for b in decls_other
+                   do block ([r: apply_all_rules (b)],
+                             print (""),
+                             grind (last (r)),
+                             print (""))),
+
+           print ("output results from apply_all_rules on decls_funcdecls to", name_output_funcdecls),
+
+           with_stdout (name_output_funcdecls,
+               for b in decls_funcdecls
+                   do block ([r: apply_all_rules (b)],
+                             print (""),
+                             grind (last (r)),
+                             print (""))));
+
+translate_from_go_json ("unit");
+translate_from_go_json ("solar");
+translate_from_go_json ("nutation");
+translate_from_go_json ("sundial");
