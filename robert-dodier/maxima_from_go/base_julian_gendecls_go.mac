@@ -1,0 +1,13 @@
+ 
+block((declare(JMod,constant),JMod:2400000.5))$
+ 
+ 
+block((declare(J2000,constant),J2000:2451545.0))$
+ 
+ 
+block((declare(J1900,constant),J1900:2415020.0),(declare(B1900,constant),B1900:2415020.3135),(declare(B1950,constant),B1950:2433282.4235))$
+ 
+ 
+block((declare(JulianYear,constant),JulianYear:365.25),(declare(JulianCentury,constant),JulianCentury:36525),
+      (declare(BesselianYear,constant),BesselianYear:365.2421988))$
+ 

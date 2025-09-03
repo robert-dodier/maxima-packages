@@ -137,7 +137,7 @@ defrule (local_var_assignment_from_AssignStmt, AssignStmt ("Lhs" = ll, "Rhs" = m
 
 matchdeclare (xx, symbolp);
 
-defrule (assignment_from_ValueSpec_Type_null_Values_nonnull,
+defrule (assignment_from_ValueSpec_Type_null_Values_nonnull_Tok_var,
          GenDecl ("Specs" = [ValueSpec ("Names" = [xx], "Type" = null, "Values" = [ll])], "Tok" = "var"),
          /* was: buildq ([xx, ll], var (xx) : ll));
           * but then there is a var(foo): ... at the top level,
@@ -145,6 +145,21 @@ defrule (assignment_from_ValueSpec_Type_null_Values_nonnull,
           * dunno how to distinguish top-level ValueSpec from ones which are in a block. !!
           */
          buildq ([xx, ll], xx : ll));
+
+matchdeclare (vv, lambda ([e], listp(e) and every (lambda ([e1], not atom(e1) and op(e1) = 'ValueSpec), e)));
+
+defrule (assignments_from_ValueSpecs_Tok_const,
+         GenDecl ("Specs" = vv, "Tok" = "const"),
+         funmake ('block, map (lambda ([e], apply1 (e, assignment_from_ValueSpec_Type_null_Values_nonnull)), vv)));
+
+defrule (assignment_from_ValueSpec_Type_null_Values_nonnull,
+         ValueSpec ("Names" = [xx], "Type" = null, "Values" = ll),
+         /* A bit of do-what-I-mean, guessing the intent here:
+          * If the righthand side is a single value,
+          * assign just that value, otherwise, assign the whole list.
+          * That fails if the intent is to assign a list comprising exactly one element.
+          */
+         buildq ([xx, yy: if length (ll) = 1 then ll[1] else ll], (declare (xx, constant), xx : yy)));
 
 matchdeclare (yy, lambda ([e], e # null));
 
@@ -278,7 +293,7 @@ apply_all_rules (b) :=
            e2: apply1 (e1, symbol_from_Ident, string_from_BasicLit, integer_from_BasicLit, float_from_BasicLit, character_from_BasicLit, list_from_null_List, list_from_List, list_from_FieldList, list_from_CompositeLit_Type_null, list_from_CompositeLit_Type_ArrayType_StructType, list_from_CompositeLit_Type_ArrayType_simple, expr_from_ParenExpr, struct_from_CompositeLit_Type_nonnull_key_value_elements, struct_from_CompositeLit_Type_nonnull_simple_elements),
            e3: apply1 (e2, funcall_no_args_from_CallExpr, funcall_from_CallExpr, expr_from_BinaryExpr, expr_from_UnaryExpr, defstruct_from_TypeSpec_StructType),
            e4: apply1 (e3, throw_from_ReturnStmt_null, throw_from_ReturnStmt, block_from_BlockStmt, local_var_assignment_from_AssignStmt),
-           e4a: apply1 (e4, assignment_from_AssignStmt, assignment_with_addition_from_AssignStmt, assignment_with_subtraction_from_AssignStmt, if_then_from_IfStmt, assignment_from_ValueSpec_Type_null_Values_nonnull, assignment_from_ValueSpec_Type_nonnull_Values_null),
+           e4a: apply1 (e4, assignment_from_AssignStmt, assignment_with_addition_from_AssignStmt, assignment_with_subtraction_from_AssignStmt, if_then_from_IfStmt, assignment_from_ValueSpec_Type_null_Values_nonnull_Tok_var, assignments_from_ValueSpecs_Tok_const, assignment_from_ValueSpec_Type_nonnull_Values_null),
            e4b: lift_local_vars_into_block (e4a),
            e5: apply1 (e4b, if_then_else_from_IfStmt, at_sign_from_SelectorExpr, for_loop_from_ForStmt, for_loop_from_RangeStmt),
            e6: apply1 (e5, function_from_FuncDecl_function, function_from_FuncDecl_method),
