@@ -1,0 +1,72 @@
+ 
+CalendarGregorianToJD(y,m,d):=returning(
+                      block([a,b],SwitchStmt("Body" = block(CaseClause("Body" = [xx:xx-1,m:m+12],[1,2])),"Init" = null,"Tag" = m),
+                            a:base@FloorDiv(y,100),b:base@FloorDiv(a,4)-a+2,
+                            throw('return(float64(base@FloorDiv64(36525*int64(y+4716),100))
+                                           +float64(base@FloorDiv(306*(m+1),10)+b)+d-1524.5))))$
+ 
+ 
+CalendarJulianToJD(y,m,d):=returning(
+                   block(SwitchStmt("Body" = block(CaseClause("Body" = [xx:xx-1,m:m+12],[1,2])),"Init" = null,"Tag" = m),
+                         throw('return(float64(base@FloorDiv64(36525*int64(y+4716),100))+float64(base@FloorDiv(306*(m+1),10))+d-1524.5))))$
+ 
+ 
+LeapYearJulian(y):=equal(mod(y,4),0)$
+ 
+ 
+LeapYearGregorian(y):=equal(mod(y,4),0) and notequal(mod(y,100),0) or equal(mod(y,400),0)$
+ 
+ 
+JDToCalendar(jd):=block([year:0,month:0,day:0],
+             returning(block([f,zf,z,a,b,c,d,e],[zf,f]:math@Modf(jd+0.5),z:int64(zf),a:z,
+                             if z >= 2299151 then block([α],α:base@FloorDiv64(100*z-186721625,3652425),a:-base@FloorDiv64(α,4)+α+z+1),
+                             b:a+1524,c:base@FloorDiv64(100*b-12210,36525),d:base@FloorDiv64(36525*c,100),
+                             e:int(base@FloorDiv64(10000.0*(b-d),306001)),day:f+float64(int(b-d)-base@FloorDiv(306001*e,10000.0)),
+                             SwitchStmt("Body" = block(CaseClause("Body" = [month:e-1],[]),CaseClause("Body" = [month:e-13],[14,15])),
+                                        "Init" = null,"Tag" = e),
+                             SwitchStmt("Body" = block(CaseClause("Body" = [year:int(c)-4716],[]),
+                                                       CaseClause("Body" = [year:int(c)-4715],[1,2])),"Init" = null,"Tag" = month),
+                             throw('return(null)))),if %% # null then %% else [year,month,day])$
+ 
+ 
+jdToCalendarGregorian(jd):=block([year:0,month:0,day:0],
+                      returning(block([f,zf,z,α,a,b,c,d,e],[zf,f]:math@Modf(jd+0.5),z:int64(zf),α:base@FloorDiv64(100*z-186721625,3652425),
+                                      a:-base@FloorDiv64(α,4)+α+z+1,b:a+1524,c:base@FloorDiv64(100*b-12210,36525),
+                                      d:base@FloorDiv64(36525*c,100),e:int(base@FloorDiv64(10000.0*(b-d),306001)),
+                                      day:f+float64(int(b-d)-base@FloorDiv(306001*e,10000.0)),
+                                      SwitchStmt("Body" = block(CaseClause("Body" = [month:e-1],[]),
+                                                                CaseClause("Body" = [month:e-13],[14,15])),"Init" = null,"Tag" = e),
+                                      SwitchStmt("Body" = block(CaseClause("Body" = [year:int(c)-4716],[]),
+                                                                CaseClause("Body" = [year:int(c)-4715],[1,2])),"Init" = null,
+                                                 "Tag" = month),throw('return(null)))),if %% # null then %% else [year,month,day])$
+ 
+ 
+JDToTime(jd):=returning(
+         block([d,m,y,t],[y,m,d]:jdToCalendarGregorian(jd),t:time@Date(y,time@Month(m),0,0,0,0,0,time@UTC),
+               throw('return(t@Add(time@Duration(24*d*float64(time@Hour)))))))$
+ 
+ 
+TimeToJD(t):=returning(
+         block([ut,_,m,y,d],ut:t@UTC(),[y,m,_]:ut@Date(),d:ut@Sub(time@Date(y,m,0,0,0,0,0,time@UTC)),
+               throw('return(CalendarGregorianToJD(y,int(m),float64(d)/float64(24*time@Hour))))))$
+ 
+ 
+DayOfWeek(jd):=mod(int(jd+1.5),7)$
+ 
+ 
+DayOfYearGregorian(y,m,d):=DayOfYear(y,m,d,LeapYearGregorian(y))$
+ 
+ 
+DayOfYearJulian(y,m,d):=DayOfYear(y,m,d,LeapYearJulian(y))$
+ 
+ 
+DayOfYear(y,m,d,leap):=returning(block([k],k:2,if leap then block(xx:xx-1),throw('return(wholeMonths(m,k)+d))))$
+ 
+ 
+DayOfYearToCalendar(n,leap):=block([m:0,d:0],
+                    returning(block([k],k:2,if leap then block(xx:xx-1),if n < 32 then block(m:1) else block(m:(900*(n+k)+26950)/27500),
+                                    throw('return([m,n-wholeMonths(m,k)])))),if %% # null then %% else [m,d])$
+ 
+ 
+wholeMonths(m,k):=-((k*(m+9))/12)+(275*m)/9-30$
+ 

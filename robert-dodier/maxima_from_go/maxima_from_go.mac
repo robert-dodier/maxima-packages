@@ -137,6 +137,11 @@ defrule (local_var_assignment_from_AssignStmt, AssignStmt ("Lhs" = ll, "Rhs" = m
 
 matchdeclare (xx, symbolp);
 
+matchdeclare (ppmm, lambda ([e], e = "++" or e = "--"));
+
+defrule (assignment_from_IncDecStmt, IncDecStmt ("Tok" = ppmm, "X" = xx),
+         buildq ([o: if ppmm = "++" then "+" else "-"], xx: o(xx, 1)));
+
 defrule (assignment_from_ValueSpec_Type_null_Values_nonnull_Tok_var,
          GenDecl ("Specs" = [ValueSpec ("Names" = [xx], "Type" = null, "Values" = [ll])], "Tok" = "var"),
          /* was: buildq ([xx, ll], var (xx) : ll));
@@ -293,7 +298,7 @@ apply_all_rules (b) :=
            e2: apply1 (e1, symbol_from_Ident, string_from_BasicLit, integer_from_BasicLit, float_from_BasicLit, character_from_BasicLit, list_from_null_List, list_from_List, list_from_FieldList, list_from_CompositeLit_Type_null, list_from_CompositeLit_Type_ArrayType_StructType, list_from_CompositeLit_Type_ArrayType_simple, expr_from_ParenExpr, struct_from_CompositeLit_Type_nonnull_key_value_elements, struct_from_CompositeLit_Type_nonnull_simple_elements),
            e3: apply1 (e2, funcall_no_args_from_CallExpr, funcall_from_CallExpr, expr_from_BinaryExpr, expr_from_UnaryExpr, defstruct_from_TypeSpec_StructType),
            e4: apply1 (e3, throw_from_ReturnStmt_null, throw_from_ReturnStmt, block_from_BlockStmt, local_var_assignment_from_AssignStmt),
-           e4a: apply1 (e4, assignment_from_AssignStmt, assignment_with_addition_from_AssignStmt, assignment_with_subtraction_from_AssignStmt, if_then_from_IfStmt, assignment_from_ValueSpec_Type_null_Values_nonnull_Tok_var, assignments_from_ValueSpecs_Tok_const, assignment_from_ValueSpec_Type_nonnull_Values_null),
+           e4a: apply1 (e4, assignment_from_AssignStmt, assignment_with_addition_from_AssignStmt, assignment_with_subtraction_from_AssignStmt, if_then_from_IfStmt, assignment_from_ValueSpec_Type_null_Values_nonnull_Tok_var, assignments_from_ValueSpecs_Tok_const, assignment_from_ValueSpec_Type_nonnull_Values_null, assignment_from_IncDecStmt),
            e4b: lift_local_vars_into_block (e4a),
            e5: apply1 (e4b, if_then_else_from_IfStmt, at_sign_from_SelectorExpr, for_loop_from_ForStmt, for_loop_from_RangeStmt),
            e6: apply1 (e5, function_from_FuncDecl_function, function_from_FuncDecl_method),
