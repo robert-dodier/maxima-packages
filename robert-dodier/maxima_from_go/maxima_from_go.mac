@@ -187,6 +187,26 @@ defrule (if_then_else_from_IfStmt,
          IfStmt ("Body" = aa, "Cond" = bb, "Else" = cc, "Init" = null),
          buildq ([aa, bb, cc], if bb then aa else cc));
 
+defrule (if_then_else_from_SwitchStmt,
+         SwitchStmt ("Body" = aa, "Init" = null, "Tag" = bb),
+         construct_if_then_else_from_switch_body (aa, bb));
+
+construct_if_then_else_from_switch_body (body, tag) :=
+    block ([default_case, nondefault_cases],
+           sublist (args (body), lambda ([e], second (e) = [])),
+           default_case: if length (%%) = 0 then false
+                             elseif length (%%) = 1 then assoc ("Body", %%[1])
+                             else error ("partition_cases: appears to be more than one default in switch"),
+           nondefault_cases: sublist (args (body), lambda ([e], second (e) # [])),
+           map (lambda ([e], [ rework_condition_for_case (second (e), tag), funmake ('?mprogn, assoc ("Body", e)) ]), nondefault_cases),
+           apply (append, %%),
+           apply ("if", append (%%, [true, apply ('block, [ assoc ("Body", default_case) ])])));
+
+rework_condition_for_case (l, tag) :=
+    if tag = null
+        then apply ("or", l)
+        else apply ("or", map (lambda ([x], equal (tag, x)), l));
+
 /* match FuncDecl with "Recv" = null; that's an ordinary function.
  * Additionally match "TypeParams" = null; not sure yet what to do otherwise.
  */
@@ -300,7 +320,7 @@ apply_all_rules (b) :=
            e4: apply1 (e3, throw_from_ReturnStmt_null, throw_from_ReturnStmt, block_from_BlockStmt, local_var_assignment_from_AssignStmt),
            e4a: apply1 (e4, assignment_from_AssignStmt, assignment_with_addition_from_AssignStmt, assignment_with_subtraction_from_AssignStmt, if_then_from_IfStmt, assignment_from_ValueSpec_Type_null_Values_nonnull_Tok_var, assignments_from_ValueSpecs_Tok_const, assignment_from_ValueSpec_Type_nonnull_Values_null, assignment_from_IncDecStmt),
            e4b: lift_local_vars_into_block (e4a),
-           e5: apply1 (e4b, if_then_else_from_IfStmt, at_sign_from_SelectorExpr, for_loop_from_ForStmt, for_loop_from_RangeStmt),
+           e5: apply1 (e4b, if_then_else_from_IfStmt, if_then_else_from_SwitchStmt, at_sign_from_SelectorExpr, for_loop_from_ForStmt, for_loop_from_RangeStmt),
            e6: apply1 (e5, function_from_FuncDecl_function, function_from_FuncDecl_method),
            methods_list_names_only: setify (map (op, methods_list)),
            e7: apply1 (e6, rewrite_method_calls_no_args, rewrite_method_calls_one_arg),
