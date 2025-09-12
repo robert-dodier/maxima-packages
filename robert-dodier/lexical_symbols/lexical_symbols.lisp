@@ -151,10 +151,12 @@
   (if (eq (first-c) '|$(|)
     (progn
       (pop-c) ;; eat the opening parenthesis
-      (let
+      (let*
         ((right (prsmatch right-paren-symbol '$any))
-         (header (mheader 'lambda)))
-        (cons '$any (subst-lexical-symbols-into-mdefine-or-lambda (cons header right)))))
+         (header (mheader 'lambda))
+         (foo (cons header right))
+         (my-lambda (if ($listp (first right)) (subst-lexical-symbols-into-mdefine-or-lambda foo) foo)))
+        (cons '$any my-lambda)))
     `($any . ,op)))
 
 ;; Lexicalize MDO and MDOIN (i.e., for x: ... do ..., and for x in ... do ...)
