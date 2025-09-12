@@ -1,3 +1,8 @@
+load ("/home/dodier/github/github-forks/maxima-packages/robert-dodier/lexical_symbols/lexical_symbols.lisp");
+load ("/home/dodier/github/github-forks/maxima-packages/robert-dodier/lexical_symbols/with-lexical-environment.lisp");
+load ("/home/dodier/github/github-forks/maxima-packages/robert-dodier/lexical_symbols/mlambda.lisp");
+load ("/home/dodier/github/github-forks/maxima-packages/robert-dodier/lexical_symbols/meval.lisp");
+
 load ("math_go.mac");
 load ("base_go.mac");
 
@@ -155,7 +160,7 @@ matchdeclare (vv, lambda ([e], listp(e) and every (lambda ([e1], not atom(e1) an
 
 defrule (assignments_from_ValueSpecs_Tok_const,
          GenDecl ("Specs" = vv, "Tok" = "const"),
-         funmake ('block, map (lambda ([e], apply1 (e, assignment_from_ValueSpec_Type_null_Values_nonnull)), vv)));
+         funmake (verbify ("block"), map (lambda ([e], apply1 (e, assignment_from_ValueSpec_Type_null_Values_nonnull)), vv)));
 
 defrule (assignment_from_ValueSpec_Type_null_Values_nonnull,
          ValueSpec ("Names" = [xx], "Type" = null, "Values" = ll),
@@ -200,7 +205,7 @@ construct_if_then_else_from_switch_body (body, tag) :=
            nondefault_cases: sublist (args (body), lambda ([e], second (e) # [])),
            map (lambda ([e], [ rework_condition_for_case (second (e), tag), funmake ('?mprogn, assoc ("Body", e)) ]), nondefault_cases),
            apply (append, %%),
-           apply ("if", append (%%, [true, apply ('block, [ assoc ("Body", default_case) ])])));
+           apply ("if", append (%%, [true, apply (verbify ("block"), [ assoc ("Body", default_case) ])])));
 
 rework_condition_for_case (l, tag) :=
     if tag = null
@@ -333,7 +338,7 @@ lift_local_vars_into_block (e) :=
     scanmap (lift_local_vars_into_block1, e);
 
 lift_local_vars_into_block1 (e) :=
-    if not atom(e) and op(e) = block
+    if not atom(e) and op(e) = verbify ("block")
         then block ([vars: [], exprs: [], existing_vars: []],
                     for e1 in (if length (e) > 0 and listp (first (e)) then (existing_vars: first (e), rest (e)) else e)
                         do (if match_local_var_assignment (e1) # false
