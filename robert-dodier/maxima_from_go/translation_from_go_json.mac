@@ -3,13 +3,15 @@ load ("maxima_from_go.mac");
 /* ideally maintain one list per module or package, not sure which */
 methods_list: [];
 
-translate_from_go_json (name) := 
+translate_from_go_json (name, [optional]) := 
     block ([blobs, decls, decls_gendecls, decls_funcdecls, decls_others,
-            name_input, name_output_gendecls, name_output_funcdecls, name_output_other], 
+            name_input, name_output_gendecls, name_output_funcdecls, name_output_other,
+            output_stream], 
            name_input: sconcat (name, "1.json"),
-           name_output_gendecls: sconcat (name, "_gendecls_go.mac"),
-           name_output_funcdecls: sconcat (name, "_funcdecls_go.mac"),
-           name_output_other: sconcat (name, "_other_go.mac"),
+           if (output_stream: assoc ('output, optional)) = false 
+               then (name_output_gendecls: sconcat (name, "_gendecls_go.mac"),
+                     name_output_funcdecls: sconcat (name, "_funcdecls_go.mac"),
+                     name_output_other: sconcat (name, "_other_go.mac")),
 
            blobs: read_json (name_input),
            decls: blobs // "Decls",
@@ -21,27 +23,29 @@ translate_from_go_json (name) :=
            print ("length decls_funcdecls -->", length (decls_funcdecls)),
            print ("length decls_other -->", length (decls_other)),
 
-           print ("output results from apply_all_rules on decls_gendecls to", name_output_gendecls),
+           foo: lambda ([f], if output_stream = false then f else output_stream),
 
-           with_stdout (name_output_gendecls,
+           print ("output results from apply_all_rules on decls_gendecls to", foo (name_output_gendecls)),
+
+           with_stdout (foo (name_output_gendecls),
                for b in decls_gendecls
                    do block ([r: apply_all_rules (b)],
                              print (""),
                              grind (last (r)),
                              print (""))),
 
-           print ("output results from apply_all_rules on decls_other to", name_output_other),
+           print ("output results from apply_all_rules on decls_other to", foo (name_output_other)),
 
-           with_stdout (name_output_other,
+           with_stdout (foo (name_output_other),
                for b in decls_other
                    do block ([r: apply_all_rules (b)],
                              print (""),
                              grind (last (r)),
                              print (""))),
 
-           print ("output results from apply_all_rules on decls_funcdecls to", name_output_funcdecls),
+           print ("output results from apply_all_rules on decls_funcdecls to", foo (name_output_funcdecls)),
 
-           with_stdout (name_output_funcdecls,
+           with_stdout (foo (name_output_funcdecls),
                for b in decls_funcdecls
                    do block ([r: apply_all_rules (b)],
                              print (""),
