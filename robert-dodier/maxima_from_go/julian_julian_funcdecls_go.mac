@@ -1,9 +1,33 @@
+"default_case ="$
+false$
+"default_case0 ="$
+false$
+"default_case1 ="$
+[true,false]$
+"nondefault_cases ="$
+[CaseClause("Body" = [xx:xx-1,m:m+12],[1,2])]$
+"nondefault_cases1 ="$
+[equal(m,1) or equal(m,2),(xx:xx-1,m:m+12)]$
+"if_then_else ="$
+if equal(m,1) or equal(m,2) then (xx:xx-1,m:m+12)$
  
 CalendarGregorianToJD(splice(args_symbols)):=returning(
                       block([a,b],if equal(m,1) or equal(m,2) then (xx:xx-1,m:m+12),a:base@FloorDiv(y,100),b:base@FloorDiv(a,4)-a+2,
                             throw('return(float64(base@FloorDiv64(36525*int64(y+4716),100))
                                            +float64(base@FloorDiv(306*(m+1),10)+b)+d-1524.5))))$
  
+"default_case ="$
+false$
+"default_case0 ="$
+false$
+"default_case1 ="$
+[true,false]$
+"nondefault_cases ="$
+[CaseClause("Body" = [xx:xx-1,m:m+12],[1,2])]$
+"nondefault_cases1 ="$
+[equal(m,1) or equal(m,2),(xx:xx-1,m:m+12)]$
+"if_then_else ="$
+if equal(m,1) or equal(m,2) then (xx:xx-1,m:m+12)$
  
 CalendarJulianToJD(splice(args_symbols)):=returning(
                    block(if equal(m,1) or equal(m,2) then (xx:xx-1,m:m+12),
@@ -15,24 +39,73 @@ LeapYearJulian(splice(args_symbols)):=equal(mod(y,4),0)$
  
 LeapYearGregorian(splice(args_symbols)):=equal(mod(y,4),0) and notequal(mod(y,100),0) or equal(mod(y,400),0)$
  
+"default_case ="$
+CaseClause("Body" = [month:e-1],[])$
+"default_case0 ="$
+[month:e-1]$
+"default_case1 ="$
+[true,(month:e-1)]$
+"nondefault_cases ="$
+[CaseClause("Body" = [month:e-13],[14,15])]$
+"nondefault_cases1 ="$
+[equal(e,14) or equal(e,15),(month:e-13)]$
+"if_then_else ="$
+if equal(e,14) or equal(e,15) then (month:e-13) else (month:e-1)$
+"default_case ="$
+CaseClause("Body" = [year:int(c)-4716],[])$
+"default_case0 ="$
+[year:int(c)-4716]$
+"default_case1 ="$
+[true,(year:int(c)-4716)]$
+"nondefault_cases ="$
+[CaseClause("Body" = [year:int(c)-4715],[1,2])]$
+"nondefault_cases1 ="$
+[equal(month,1) or equal(month,2),(year:int(c)-4715)]$
+"if_then_else ="$
+if equal(month,1) or equal(month,2) then (year:int(c)-4715) else (year:int(c)-4716)$
  
 JDToCalendar(splice(args_symbols)):=block([year:0,month:0,day:0],
              returning(block([f,zf,z,a,b,c,d,e],[zf,f]:math@Modf(jd+0.5),z:int64(zf),a:z,
                              if z >= 2299151 then block([α],α:base@FloorDiv64(100*z-186721625,3652425),a:-base@FloorDiv64(α,4)+α+z+1),
                              b:a+1524,c:base@FloorDiv64(100*b-12210,36525),d:base@FloorDiv64(36525*c,100),
                              e:int(base@FloorDiv64(10000.0*(b-d),306001)),day:f+float64(int(b-d)-base@FloorDiv(306001*e,10000.0)),
-                             if equal(e,14) or equal(e,15) then (month:e-13),if equal(month,1) or equal(month,2) then (year:int(c)-4715),
-                             throw('return(null)))),if %% # null then %% else [year,month,day])$
+                             if equal(e,14) or equal(e,15) then (month:e-13) else (month:e-1),
+                             if equal(month,1) or equal(month,2) then (year:int(c)-4715) else (year:int(c)-4716),throw('return(null)))),
+             if %% # null then %% else [year,month,day])$
  
+"default_case ="$
+CaseClause("Body" = [month:e-1],[])$
+"default_case0 ="$
+[month:e-1]$
+"default_case1 ="$
+[true,(month:e-1)]$
+"nondefault_cases ="$
+[CaseClause("Body" = [month:e-13],[14,15])]$
+"nondefault_cases1 ="$
+[equal(e,14) or equal(e,15),(month:e-13)]$
+"if_then_else ="$
+if equal(e,14) or equal(e,15) then (month:e-13) else (month:e-1)$
+"default_case ="$
+CaseClause("Body" = [year:int(c)-4716],[])$
+"default_case0 ="$
+[year:int(c)-4716]$
+"default_case1 ="$
+[true,(year:int(c)-4716)]$
+"nondefault_cases ="$
+[CaseClause("Body" = [year:int(c)-4715],[1,2])]$
+"nondefault_cases1 ="$
+[equal(month,1) or equal(month,2),(year:int(c)-4715)]$
+"if_then_else ="$
+if equal(month,1) or equal(month,2) then (year:int(c)-4715) else (year:int(c)-4716)$
  
 jdToCalendarGregorian(splice(args_symbols)):=block([year:0,month:0,day:0],
                       returning(block([f,zf,z,α,a,b,c,d,e],[zf,f]:math@Modf(jd+0.5),z:int64(zf),α:base@FloorDiv64(100*z-186721625,3652425),
                                       a:-base@FloorDiv64(α,4)+α+z+1,b:a+1524,c:base@FloorDiv64(100*b-12210,36525),
                                       d:base@FloorDiv64(36525*c,100),e:int(base@FloorDiv64(10000.0*(b-d),306001)),
                                       day:f+float64(int(b-d)-base@FloorDiv(306001*e,10000.0)),
-                                      if equal(e,14) or equal(e,15) then (month:e-13),
-                                      if equal(month,1) or equal(month,2) then (year:int(c)-4715),throw('return(null)))),
-                      if %% # null then %% else [year,month,day])$
+                                      if equal(e,14) or equal(e,15) then (month:e-13) else (month:e-1),
+                                      if equal(month,1) or equal(month,2) then (year:int(c)-4715) else (year:int(c)-4716),
+                                      throw('return(null)))),if %% # null then %% else [year,month,day])$
  
  
 JDToTime(splice(args_symbols)):=returning(

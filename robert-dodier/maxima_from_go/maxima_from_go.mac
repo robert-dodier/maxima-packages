@@ -197,15 +197,25 @@ defrule (if_then_else_from_SwitchStmt,
          construct_if_then_else_from_switch_body (aa, bb));
 
 construct_if_then_else_from_switch_body (body, tag) :=
-    block ([default_case, nondefault_cases],
+    block ([default_case, default_case1, default_case0, nondefault_cases, nondefault_cases1, if_then_else],
            sublist (args (body), lambda ([e], second (e) = [])),
            default_case: if length (%%) = 0 then false
-                             elseif length (%%) = 1 then assoc ("Body", %%[1])
+                             elseif length (%%) = 1 then %%[1]
                              else error ("partition_cases: appears to be more than one default in switch"),
+grind ("default_case =", default_case),
+           default_case0: assoc ("Body", default_case),
+grind ("default_case0 =", default_case0),
+           default_case1: if default_case0 = false then [true, false] else [true, buildq ([e: default_case0], ?mprogn (splice (e)))],
+           /* default_case1: if default_case0 = false then [true, false] else [true, funmake ('bolck, default_case0)], */
+grind ("default_case1 =", default_case1),
            nondefault_cases: sublist (args (body), lambda ([e], second (e) # [])),
+grind ("nondefault_cases =", nondefault_cases),
            map (lambda ([e], [ rework_condition_for_case (second (e), tag), funmake ('?mprogn, assoc ("Body", e)) ]), nondefault_cases),
-           apply (append, %%),
-           apply ("if", append (%%, [true, apply (verbify ("block"), [ assoc ("Body", default_case) ])])));
+           nondefault_cases1: apply (append, %%),
+grind ("nondefault_cases1 =", nondefault_cases1),
+           if_then_else: apply ("if", append (nondefault_cases1, default_case1)),
+grind ("if_then_else =", if_then_else),
+           if_then_else);
 
 rework_condition_for_case (l, tag) :=
     if tag = null
