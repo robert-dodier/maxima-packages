@@ -6,7 +6,7 @@ methods_list: [];
 translate_from_go_json (name, [optional]) := 
     block ([blobs, decls, decls_gendecls, decls_funcdecls, decls_others,
             name_input, name_output_gendecls, name_output_funcdecls, name_output_other,
-            output_stream], 
+            output_stream, foo], 
            name_input: sconcat (name, "1.json"),
            if (output_stream: assoc ('output, optional)) = false 
                then (name_output_gendecls: sconcat (name, "_gendecls_go.mac"),
