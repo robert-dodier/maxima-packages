@@ -135,6 +135,29 @@
   (let ((e (parse-infix op left)))
     (cons (first e) (subst-lexical-symbols-into-mdefine-or-lambda (rest e)))))
 
+(defun extract-arguments-symbols-1 (l)
+
+  ;; L is something like:
+  ;;  (1) [x, y, z]
+  ;;  (2) [x, y, z, [a]]
+  ;;  (3) above forms with any simple symbol x replaced by 'x
+  ;;  (4) above forms with any simple symbol x replaced by splice(x)
+  ;;
+  ;; x in splice(x) is a variable which is an argument for buildq,
+  ;; and we can't replace with with a gensym without causing buildq to malfunction;
+  ;; also, a simple symbol could be a buildq argument, but I don't know how to detect it.
+  ;;
+  ;; Therefore flatten L,
+  ;; remove any quotes,
+  ;; remove any instances of splice, 
+  ;; and return the result as a Lisp list.
+
+  (let*
+    ((m ($flatten l))
+     (n (mapcar (lambda (x) (if (and (consp x) (eq (caar x) 'mquote)) (first x) x)) (rest m)))
+     (o (remove-if (lambda (x) (and (consp x) (eq (caar x) '$splice))) n)))
+    o))
+
 (defun extract-arguments-symbols (e)
   (let*
     ((e-lhs (second e))
@@ -142,8 +165,8 @@
      (e-lhs-op ($op e-lhs))
      (e-lhs-args ($args e-lhs)))
     (if is-mqapply
-      (rest ($listofvars ($append ($args e-lhs-op) e-lhs-args)))
-      (rest ($listofvars e-lhs-args)))))
+      (extract-arguments-symbols-1 ($append ($args e-lhs-op) e-lhs-args))
+      (extract-arguments-symbols-1 e-lhs-args))))
 
 ;; Lexicalize LAMBDA (i.e., lambda([a, b, c, ...], ...))
 
