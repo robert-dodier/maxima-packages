@@ -109,7 +109,8 @@ unit@TimeFromRad: ?mget (TimeFromRad, ?mexpr);
 
 /* same with this stuff about the nutation package !! */
 
-load ("nutation_go.mac");
+load ("nutation_gendecls_go.mac");
+load ("nutation_funcdecls_go.mac");
 
 defstruct (nutation_struct (Nutation, ApproxNutation, MeanObliquity, MeanObliquityLaskar, NutationInRA));
 nutation: new (nutation_struct);
