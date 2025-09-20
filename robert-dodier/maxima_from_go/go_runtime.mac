@@ -74,7 +74,8 @@ tellsimpafter (xx^nn, Angle (first (xx)^nn));
 
 /* ideally this stuff about the unit package would be automatically generated ... !! */
 
-load ("unit_go.mac");
+load ("unit_gendecls_go.mac");
+load ("unit_funcdecls_go.mac");
 
 defstruct (unit_struct (Angle, HourAngle, RA, Time, FromSexa, FromSexaSec, PMod, AngleFromDeg, AngleFromMin, AngleFromSec, NewAngle, HourAngleFromHour, HourAngleFromMin, HourAngleFromSec, NewHourAngle, NewRA, RAFromDeg, RAFromHour, RAFromMin, RAFromRad, RAFromSec, NewTime, TimeFromDay, TimeFromHour, TimeFromMin, TimeFromRad));
 unit: new (unit_struct);

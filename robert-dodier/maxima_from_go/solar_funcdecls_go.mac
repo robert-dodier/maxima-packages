@@ -1,11 +1,4 @@
  
-GenDecl("Specs" = [ImportSpec("Name" = null,"Path" = "math"),ImportSpec("Name" = null,"Path" = "github.com/soniakeys/meeus/v3/base"),
-                   ImportSpec("Name" = null,"Path" = "github.com/soniakeys/meeus/v3/coord"),
-                   ImportSpec("Name" = null,"Path" = "github.com/soniakeys/meeus/v3/nutation"),
-                   ImportSpec("Name" = pp,"Path" = "github.com/soniakeys/meeus/v3/planetposition"),
-                   ImportSpec("Name" = null,"Path" = "github.com/soniakeys/unit")],"Tok" = "import")$
- 
- 
 True(T):=block([s:default(unit@Angle),ν:default(unit@Angle)],
      returning(block([L0,M,C],L0:unit@AngleFromDeg(base@Horner(T,280.46646,36000.76983,3.032e-4)),M:MeanAnomaly(T),
                      C:unit@AngleFromDeg(Sin[go_type_of(M)](M)()*base@Horner(T,1.914602,-0.004817,-1.4e-5)

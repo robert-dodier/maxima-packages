@@ -13,7 +13,8 @@ ApparentEquatorial (jde) --> 4.912862965283581 -0.40174861376992765
  */
 
 load ("go_runtime.mac");
-load ("solar_go.mac");
+load ("solar_gendecls_go.mac");
+load ("solar_funcdecls_go.mac");
 
 display (True (0.25));
 "expected: True (0.25) --> 4.896810933883877 6.234304499640338" $
