@@ -1,0 +1,25 @@
+/* find_globals.mac -- return a list of the apparently-global symbols in an expression
+ *
+ * copyright 2015 by Robert Dodier
+ * I release this work under terms of the GNU General Public License, version 2
+ */
+
+find_globals (e) :=
+  if atom(e) then if symbolp(e) then set(e) else set()
+  else if op(e) = 'block then
+    if args (e) = [] then set()
+    else block ([u: first (args (e)), v, w],
+      v: if listp(u) then map (lambda ([x], if atom(x) then x else first(x)), u) else [],
+      w: apply (union, map (find_globals, rest (args (e)))),
+      setdifference (w, setify(v)))
+  else if op(e) = 'lambda then
+    block ([v: first (args (e)), w],
+      w: apply (union, map (find_globals, rest (args (e)))),
+      setdifference (w, setify(v)))
+  else if op(e) = ":=" then
+    if args (first (e)) = [] then set()
+    else block ([u: args (first (e)), v, w],
+      v: if listp (last (u)) then cons (first (last (u)), rest (reverse (u))) else u,
+      w: apply (union, map (find_globals, [second (e)])),
+      setdifference (w, setify(v)))
+  else apply (union, map (find_globals, args (e)));
