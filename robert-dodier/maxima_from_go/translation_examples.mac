@@ -10,10 +10,10 @@ results2: apply_all_rules (blob2);
 grind (last (results2));
 ''(last (results2));
 
+load ("go_runtime.mac");
+
 FromSexa ("+", hh, mm, ss);
 FromSexa ("-", hh, mm, ss);
-
-kill (FromSexa, FromSexaSec);
 
 /*
 debugmode (true);
@@ -26,9 +26,3 @@ for i thru length (sundial_decls_funcdecls)
               print (""));
  */
 
-translate_from_go_json ("unit");
-translate_from_go_json ("solar");
-translate_from_go_json ("nutation");
-translate_from_go_json ("sundial");
-translate_from_go_json ("base_julian");
-translate_from_go_json ("julian_julian");
