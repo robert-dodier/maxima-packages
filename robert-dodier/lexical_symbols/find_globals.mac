@@ -6,7 +6,7 @@
 
 find_globals (e) :=
   if atom(e) then if symbolp(e) then set(e) else set()
-  else if op(e) = 'block then
+  else if op(e) = verbify ("block") then
     if args (e) = [] then set()
     else block ([u: first (args (e)), v, w],
       v: if listp(u) then map (lambda ([x], if atom(x) then x else first(x)), u) else [],
