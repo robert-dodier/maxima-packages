@@ -1,0 +1,65 @@
+data_frame_from_file (input) :=
+    block ([ data, columns_names, data_by_columns, stations, names, dates, stations_runs,
+             maybe_parse, measured_data_by_columns, measured_data_by_columns_parsed ],
+
+           data: read_matrix (input),
+
+           columns_names: data[1],
+
+           if firstn (columns_names, 3) # [ "STATION", "NAME", "DATE" ]
+               then error ("data_frame_from_file: expected first three columns are STATION, NAME, and DATE."),
+
+           data_by_columns: args (transpose (rest (data))),
+           [stations, names, dates]: [ data_by_columns[1], data_by_columns[2], data_by_columns[3] ],
+           measured_data_by_columns: rest (data_by_columns, 3),
+
+           maybe_parse: lambda ([x], if stringp (x) then parse_string (x) else x),
+           measured_data_by_columns_parsed: makelist (map (maybe_parse, X), X, measured_data_by_columns),
+
+           /* Forgo parsing dates since parsed dates aren't any easier to work with,
+            * given that dates are big-endian yyyy-mm-dd.
+            */
+
+           make_data_frame (columns_names, append ([stations, names, dates], measured_data_by_columns_parsed)));
+
+defstruct (data_frame (names, data));
+
+make_data_frame (columns_names, columns_data) :=
+    block ([h: make_array (hashed)],
+           /* maybe convert lists to 1-d arrays and put that into hash table */
+           map (lambda ([name, column], h[name]: column), columns_names, columns_data),
+           data_frame (columns_names, h));
+
+prefix ("group");
+infix ("by");
+
+matchdeclare (ll, listp);
+matchdeclare (dd, lambda ([e], not atom (e) and op (e) = 'data_frame));
+matchdeclare ([aa, bb], all);
+
+tellsimpafter (group ll, group1 (ll));
+
+group1 (l) :=
+    block ([h: make_array (hashed)],
+           for u in unique (l) do h[u]: sublist (l, lambda ([e1], e1 = u)),
+           h);
+
+tellsimpafter (group (dd by aa), group_data_frame_by (dd, aa));
+
+group_data_frame_by (df, a) :=
+    if not member (a, df@names)
+        then error ("group:", a, "is not in the list of names", df@names)
+        else block ([h: make_array (hashed),
+                     uu: unique (df@data[a]),
+                     names_sans_a: delete (a, df@names)],
+                    for u in uu
+                        do block ([ii: sublist_indices (df@data[a], lambda ([x], x = u)), ll],
+                                  ll: makelist (makelist (df@data[x][i], i, ii), x, names_sans_a),
+                                  h[u]: make_data_frame (names_sans_a, ll)),
+                    h);
+
+load ("operatingsystem");
+
+if (input: getenv ("INPUT")) = false
+    then print ("analyze_weather_data.mac: environment variable INPUT not specified, with no default.");
+

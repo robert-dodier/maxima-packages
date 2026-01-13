@@ -61,3 +61,16 @@ group_by_winter_years (S) :=
 tmin_by_winter_years (S) :=
     block ([ii: group_by_winter_years (S), u],
            makelist (lhs (e) = lmin (makelist (data_by_station[S]@TMIN[i], i, rhs (e))), e, ii));
+
+year (t) :=
+    block ([t_decoded: decode_time (t)],
+           t_decoded[7]);
+
+group_by_years (S) :=
+    block ([w: map (year, data_by_station[S]@DATE), u],
+           u: unique (w),
+           makelist (y1 = sublist_indices (w, lambda ([x], x = y1)), y1, u));
+
+tmax_by_years (S) :=
+    block ([ii: group_by_years (S), u],
+           makelist (lhs (e) = lmax (makelist (data_by_station[S]@TMAX[i], i, rhs (e))), e, ii));
