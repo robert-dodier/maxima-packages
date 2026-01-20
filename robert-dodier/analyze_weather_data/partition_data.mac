@@ -24,6 +24,8 @@ data_frame_from_file (input) :=
 
 defstruct (data_frame (names, data));
 
+data_frame_p (e) := not atom(e) and op(e) = 'data_frame;
+
 make_data_frame (columns_names, columns_data) :=
     block ([h: make_array (hashed)],
            /* maybe convert lists to 1-d arrays and put that into hash table */
@@ -58,8 +60,23 @@ group_data_frame_by (df, a) :=
                                   h[u]: make_data_frame (names_sans_a, ll)),
                     h);
 
-load ("operatingsystem");
+infix ("of");
 
-if (input: getenv ("INPUT")) = false
-    then print ("analyze_weather_data.mac: environment variable INPUT not specified, with no default.");
+matchdeclare ([aa, bb, ff], all);
+defmatch (m1, (aa of bb) by ff);
 
+aggregate (e) :=
+    block ([aa, bb, ff],
+           if m1 (e) # false
+               then if data_frame_p (bb)
+                        then if listp (aa)
+                                 then map (lambda ([aa1], aggregate (aa1 of bb by ff)), aa)
+                                 /* filter out missing values before calling function;
+                                  * probably need to allow for other ways to handle them
+                                  */
+                                 else block ([data1: sublist (bb@data[aa], lambda ([a], a # false))],
+                                             ff (data1))
+                        else block ([h: make_array (hashed)],
+                                    for [k, v] in bb
+                                        do arraysetapply (h, k, aggregate (aa of v by ff)),
+                                    h));

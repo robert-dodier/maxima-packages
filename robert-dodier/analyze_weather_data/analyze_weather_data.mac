@@ -74,3 +74,11 @@ group_by_years (S) :=
 tmax_by_years (S) :=
     block ([ii: group_by_years (S), u],
            makelist (lhs (e) = lmax (makelist (data_by_station[S]@TMAX[i], i, rhs (e))), e, ii));
+
+ymd_regex: regex_compile ("^\\s*(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)\\s*$");
+
+meteo_year_from_string (ymd) :=
+    block ([m: regex_match (ymd_regex, ymd)],
+           if m # false
+               then block ([yy: parse_string (m[2]), mm: parse_string (m[3])],
+                           if mm >= 9 then yy else yy - 1));
