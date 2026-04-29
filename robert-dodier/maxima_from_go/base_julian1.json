@@ -1,0 +1,663 @@
+{
+   "Comments" : null,
+   "Decls" : [
+      {
+         "NodeType" : "GenDecl",
+         "Specs" : [
+            {
+               "Names" : [
+                  {
+                     "Name" : "JMod",
+                     "NodeType" : "Ident"
+                  }
+               ],
+               "NodeType" : "ValueSpec",
+               "Type" : null,
+               "Values" : [
+                  {
+                     "Kind" : "FLOAT",
+                     "NodeType" : "BasicLit",
+                     "Value" : "2400000.5"
+                  }
+               ]
+            }
+         ],
+         "Tok" : "const"
+      },
+      {
+         "NodeType" : "GenDecl",
+         "Specs" : [
+            {
+               "Names" : [
+                  {
+                     "Name" : "J2000",
+                     "NodeType" : "Ident"
+                  }
+               ],
+               "NodeType" : "ValueSpec",
+               "Type" : null,
+               "Values" : [
+                  {
+                     "Kind" : "FLOAT",
+                     "NodeType" : "BasicLit",
+                     "Value" : "2451545.0"
+                  }
+               ]
+            }
+         ],
+         "Tok" : "const"
+      },
+      {
+         "NodeType" : "GenDecl",
+         "Specs" : [
+            {
+               "Names" : [
+                  {
+                     "Name" : "J1900",
+                     "NodeType" : "Ident"
+                  }
+               ],
+               "NodeType" : "ValueSpec",
+               "Type" : null,
+               "Values" : [
+                  {
+                     "Kind" : "FLOAT",
+                     "NodeType" : "BasicLit",
+                     "Value" : "2415020.0"
+                  }
+               ]
+            },
+            {
+               "Names" : [
+                  {
+                     "Name" : "B1900",
+                     "NodeType" : "Ident"
+                  }
+               ],
+               "NodeType" : "ValueSpec",
+               "Type" : null,
+               "Values" : [
+                  {
+                     "Kind" : "FLOAT",
+                     "NodeType" : "BasicLit",
+                     "Value" : "2415020.3135"
+                  }
+               ]
+            },
+            {
+               "Names" : [
+                  {
+                     "Name" : "B1950",
+                     "NodeType" : "Ident"
+                  }
+               ],
+               "NodeType" : "ValueSpec",
+               "Type" : null,
+               "Values" : [
+                  {
+                     "Kind" : "FLOAT",
+                     "NodeType" : "BasicLit",
+                     "Value" : "2433282.4235"
+                  }
+               ]
+            }
+         ],
+         "Tok" : "const"
+      },
+      {
+         "NodeType" : "GenDecl",
+         "Specs" : [
+            {
+               "Names" : [
+                  {
+                     "Name" : "JulianYear",
+                     "NodeType" : "Ident"
+                  }
+               ],
+               "NodeType" : "ValueSpec",
+               "Type" : null,
+               "Values" : [
+                  {
+                     "Kind" : "FLOAT",
+                     "NodeType" : "BasicLit",
+                     "Value" : "365.25"
+                  }
+               ]
+            },
+            {
+               "Names" : [
+                  {
+                     "Name" : "JulianCentury",
+                     "NodeType" : "Ident"
+                  }
+               ],
+               "NodeType" : "ValueSpec",
+               "Type" : null,
+               "Values" : [
+                  {
+                     "Kind" : "INT",
+                     "NodeType" : "BasicLit",
+                     "Value" : "36525"
+                  }
+               ]
+            },
+            {
+               "Names" : [
+                  {
+                     "Name" : "BesselianYear",
+                     "NodeType" : "Ident"
+                  }
+               ],
+               "NodeType" : "ValueSpec",
+               "Type" : null,
+               "Values" : [
+                  {
+                     "Kind" : "FLOAT",
+                     "NodeType" : "BasicLit",
+                     "Value" : "365.2421988"
+                  }
+               ]
+            }
+         ],
+         "Tok" : "const"
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "+",
+                        "X" : {
+                           "Name" : "J2000",
+                           "NodeType" : "Ident"
+                        },
+                        "Y" : {
+                           "NodeType" : "BinaryExpr",
+                           "Op" : "*",
+                           "X" : {
+                              "Name" : "JulianYear",
+                              "NodeType" : "Ident"
+                           },
+                           "Y" : {
+                              "NodeType" : "ParenExpr",
+                              "X" : {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "-",
+                                 "X" : {
+                                    "Name" : "jy",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "Y" : {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "2000"
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "JulianYearToJDE",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "jy",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "+",
+                        "X" : {
+                           "Kind" : "INT",
+                           "NodeType" : "BasicLit",
+                           "Value" : "2000"
+                        },
+                        "Y" : {
+                           "NodeType" : "BinaryExpr",
+                           "Op" : "/",
+                           "X" : {
+                              "NodeType" : "ParenExpr",
+                              "X" : {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "-",
+                                 "X" : {
+                                    "Name" : "jde",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "Y" : {
+                                    "Name" : "J2000",
+                                    "NodeType" : "Ident"
+                                 }
+                              }
+                           },
+                           "Y" : {
+                              "Name" : "JulianYear",
+                              "NodeType" : "Ident"
+                           }
+                        }
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "JDEToJulianYear",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "jde",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "+",
+                        "X" : {
+                           "Name" : "B1900",
+                           "NodeType" : "Ident"
+                        },
+                        "Y" : {
+                           "NodeType" : "BinaryExpr",
+                           "Op" : "*",
+                           "X" : {
+                              "Name" : "BesselianYear",
+                              "NodeType" : "Ident"
+                           },
+                           "Y" : {
+                              "NodeType" : "ParenExpr",
+                              "X" : {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "-",
+                                 "X" : {
+                                    "Name" : "by",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "Y" : {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "1900"
+                                 }
+                              }
+                           }
+                        }
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "BesselianYearToJDE",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "by",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "+",
+                        "X" : {
+                           "Kind" : "INT",
+                           "NodeType" : "BasicLit",
+                           "Value" : "1900"
+                        },
+                        "Y" : {
+                           "NodeType" : "BinaryExpr",
+                           "Op" : "/",
+                           "X" : {
+                              "NodeType" : "ParenExpr",
+                              "X" : {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "-",
+                                 "X" : {
+                                    "Name" : "jde",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "Y" : {
+                                    "Name" : "B1900",
+                                    "NodeType" : "Ident"
+                                 }
+                              }
+                           },
+                           "Y" : {
+                              "Name" : "BesselianYear",
+                              "NodeType" : "Ident"
+                           }
+                        }
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "JDEToBesselianYear",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "jde",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "/",
+                        "X" : {
+                           "NodeType" : "ParenExpr",
+                           "X" : {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "-",
+                              "X" : {
+                                 "Name" : "jde",
+                                 "NodeType" : "Ident"
+                              },
+                              "Y" : {
+                                 "Name" : "J2000",
+                                 "NodeType" : "Ident"
+                              }
+                           }
+                        },
+                        "Y" : {
+                           "Name" : "JulianCentury",
+                           "NodeType" : "Ident"
+                        }
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "J2000Century",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "jde",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      }
+   ],
+   "Doc" : null,
+   "FileSet" : {
+      "Base" : 1657,
+      "Files" : [
+         {
+            "Base" : 1,
+            "Infos" : null,
+            "Lines" : [
+               0,
+               29,
+               45,
+               46,
+               59,
+               60,
+               127,
+               197,
+               198,
+               260,
+               283,
+               284,
+               353,
+               377,
+               378,
+               411,
+               419,
+               438,
+               460,
+               482,
+               484,
+               485,
+               513,
+               514,
+               554,
+               562,
+               599,
+               636,
+               673,
+               675,
+               676,
+               747,
+               790,
+               827,
+               829,
+               830,
+               899,
+               943,
+               981,
+               983,
+               984,
+               1061,
+               1107,
+               1147,
+               1149,
+               1150,
+               1227,
+               1274,
+               1315,
+               1317,
+               1318,
+               1386,
+               1389,
+               1446,
+               1487,
+               1559,
+               1577,
+               1596,
+               1615,
+               1653
+            ],
+            "Name" : "v3/base/julian.go",
+            "Size" : 1655
+         }
+      ]
+   },
+   "Imports" : null,
+   "Name" : {
+      "Name" : "base",
+      "NodeType" : "Ident"
+   },
+   "NodeType" : "File",
+   "Package" : null,
+   "Unresolved" : null
+}

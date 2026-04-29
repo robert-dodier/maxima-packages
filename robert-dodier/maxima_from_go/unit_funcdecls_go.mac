@@ -1,7 +1,4 @@
  
-GenDecl("Specs" = [ImportSpec("Name" = null,"Path" = "math")],"Tok" = "import")$
- 
- 
 FromSexa(neg,d,m,s):=FromSexaSec(neg,d,m,s)/3600$
  
  
@@ -9,9 +6,6 @@ FromSexaSec(neg,d,m,s):=returning(block(s:s+float64(60*(m+60*d)),if equal(neg,"-
  
  
 PMod(x,y):=returning(block([r],r:math@Mod(x,y),if r < 0 then block(r:y+r),throw('return(r))))$
- 
- 
-GenDecl("Specs" = [TypeSpec("Name" = Angle,"Type" = float64,"TypeParams" = null)],"Tok" = "type")$
  
  
 AngleFromDeg(d):=Angle((d*math@Pi)/180)$
@@ -68,9 +62,6 @@ Tan[Angle]:lambda([a],buildq([recv_value:a],lambda([],block([a:recv_value],math@
 Sincos[Angle]:lambda([a],buildq([recv_value:a],lambda([],block([a:recv_value],math@Sincos(Rad[go_type_of(a)](a)())))))$
  
  
-GenDecl("Specs" = [TypeSpec("Name" = HourAngle,"Type" = float64,"TypeParams" = null)],"Tok" = "type")$
- 
- 
 HourAngleFromHour(h):=HourAngle((h*math@Pi)/12)$
  
  
@@ -120,9 +111,6 @@ Tan[HourAngle]:lambda([h],buildq([recv_value:h],lambda([],block([h:recv_value],m
  
  
 Sincos[HourAngle]:lambda([h],buildq([recv_value:h],lambda([],block([h:recv_value],math@Sincos(Rad[go_type_of(h)](h)())))))$
- 
- 
-GenDecl("Specs" = [TypeSpec("Name" = RA,"Type" = float64,"TypeParams" = null)],"Tok" = "type")$
  
  
 NewRA(h,m,s):=RAFromRad((FromSexa(0,h,m,s)*math@Pi)/12)$
@@ -181,9 +169,6 @@ Tan[RA]:lambda([ra],buildq([recv_value:ra],lambda([],block([ra:recv_value],math@
  
  
 Sincos[RA]:lambda([ra],buildq([recv_value:ra],lambda([],block([ra:recv_value],math@Sincos(Rad[go_type_of(ra)](ra)())))))$
- 
- 
-GenDecl("Specs" = [TypeSpec("Name" = Time,"Type" = float64,"TypeParams" = null)],"Tok" = "type")$
  
  
 NewTime(neg,h,m,s):=returning(

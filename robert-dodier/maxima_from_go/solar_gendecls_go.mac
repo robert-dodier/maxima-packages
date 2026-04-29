@@ -1,0 +1,7 @@
+ 
+GenDecl("Specs" = [ImportSpec("Name" = null,"Path" = "math"),ImportSpec("Name" = null,"Path" = "github.com/soniakeys/meeus/v3/base"),
+                   ImportSpec("Name" = null,"Path" = "github.com/soniakeys/meeus/v3/coord"),
+                   ImportSpec("Name" = null,"Path" = "github.com/soniakeys/meeus/v3/nutation"),
+                   ImportSpec("Name" = pp,"Path" = "github.com/soniakeys/meeus/v3/planetposition"),
+                   ImportSpec("Name" = null,"Path" = "github.com/soniakeys/unit")],"Tok" = "import")$
+ 

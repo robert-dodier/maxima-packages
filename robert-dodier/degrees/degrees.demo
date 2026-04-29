@@ -1,0 +1,47 @@
+"representation of degrees, minutes, and seconds" $
+
+d1: degrees (45);
+d2: degrees (22, 30);
+d3: degrees (134, 56, 12);
+grind (d1, d2, d3);
+
+"arithmetic on degrees expressions" $
+
+d1 + d2;
+d1 + d2 + d3;
+2*d3;
+
+"conversions from/to radians" $
+
+degrees (from_radians (1));
+%, numer;
+degrees (from_radians (1/9));
+radians (from_degrees (degrees (45/2)));
+radians (from_degrees (degrees (1, 1, 1)));
+
+"by default, degrees arguments are preserved in trig functions" $
+
+L1: makelist (T (d1), T, [ sin, cos, tan, csc, sec, cot ]);
+L2: makelist (T (d2), T, [ sin, cos, tan, csc, sec, cot ]);
+L3: makelist (T (d3), T, [ sin, cos, tan, csc, sec, cot ]);
+
+"explicit evaluation of degrees in trig functions" $
+
+trig_with_degrees (L1);
+trig_with_degrees (L2);
+trig_with_degrees (L3);
+
+"degrees with variable bits" $
+
+e1: degrees (45 + x);
+e2: degrees (z, 2*y);
+e3: degrees (z, 15, t);
+
+sin (e1);
+cos (e2);
+tan (e3);
+
+trig_with_degrees (sin (e1));
+trig_with_degrees (cos (e2));
+trig_with_degrees (tan (e3));
+

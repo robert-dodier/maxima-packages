@@ -1,0 +1,80 @@
+/* joint density of order statistics of unit uniform distribution.
+ * See "The joint distribution of the order statistics of the uniform distribution"
+ * in the article "Order statistic".
+ */
+
+/* assuming i < j, the joint density of order statistics U[(i)] < U[(j)]. */
+
+f[n, i, j](u, v) := n! * (u^(i - 1)/(i - 1)!) * ((v - u)^(j - i - 1)/(j - i - 1)!) * ((1 - v)^(n - j)/(n - j)!);
+
+if properties (draw) = [] then load (draw);
+if properties (descriptive) = [] then load (descriptive);
+
+/* n = number of items sampled from uniform distribution (analogous to number of dice to roll)
+ * N = number of times sampling is repeated
+ */
+
+joint_scatterplot (n, N) :=
+    (makelist (makelist (random (1.0), n), N),
+     draw2d (point_type = filled_circle, point_size = 0.5, points (map (lambda ([x], lastn (sort (x), 2)), %%))));
+
+/* n = number of items sampled from uniform distribution
+ * N = number of times sampling is repeated
+ * k = which order statistic to look at, k = 1, ..., n
+ */
+
+marginal_histogram (n, N, k) :=
+    block ([histogram_skyline: true],
+           makelist (makelist (random (1.0), n), N),
+           map (sort, %%),
+           map (lambda ([x], x[k]), %%),
+           histogram (%%, frequency = density));
+
+/* n = number of items sampled from uniform distribution
+ * N = number of times sampling is repeated
+ * kk = list of order statistics to sum together
+ */
+
+sum_histogram_montecarlo (n, N, kk) :=
+    block ([histogram_skyline: true],
+           makelist (makelist (random (1.0), n), N),
+           map (sort, %%),
+           map (lambda ([x], lsum (x[k], k, kk)), %%),
+           histogram_description (%%, frequency = density));
+
+p1(t) := [t/2, t/2];                          
+p0a: [0, t];
+p0b: [t - 1, 1];
+p0(t) := (1 - unit_step (t - 1))*''p0a + unit_step (t - 1) * ''p0b;
+p(s):= (1 - s)*p0(t) + s*p1(t);
+arclength (t) := block ([d: (p1(t) - p0(t))], sqrt (d[1]^2 + d[2]^2));
+I(t) := integrate (apply (f[6,5,6], p(s)), s, 0, 1) * arclength (t);
+Z: integrate (I(t), t, 0, 1) + integrate (I(t), t, 1, 2);
+I1(t) := I(t) / Z;
+draw2d (sum_histogram_montecarlo (6, 10000, [5, 6]), explicit (I1, t, 0, 2));
+
+/* m = number of sides on each die
+ * n = number of dice to roll
+ * kk = list of order statistics to sum together
+ */
+
+sum_histogram_exact (m, n, kk) :=
+    block ([l: makelist (k, k, 1, m)],
+           L: apply (cartesian_product_list, makelist (l, n)),
+           L_sorted: map (sort, L),
+           selected: map (lambda ([L1], makelist (L1[k], k, kk)), L_sorted),
+           selected_sums: map (lambda ([L1], apply ("+", L1)), selected),
+           selected_sums_freq: discrete_freq (selected_sums),
+           [ %%[1], %%[2] / m^n ]);
+
+/* this next example requires allocating more memory, e.g.:
+ *   $ maxima -X '--dynamic-space-size 2048'
+ */
+
+sum_histogram_exact_12_sides_6_dice_top_2: sum_histogram_exact (12, 6, [5, 6]);
+
+/* workaround to open a new window; draw2d will use it too */
+plot2d ([discrete, [0, 0]], [window, 2]);
+
+draw2d (apply (make_skyline, append (sum_histogram_exact_12_sides_6_dice_top_2, [0, 0])));
+

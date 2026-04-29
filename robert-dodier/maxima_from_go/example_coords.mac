@@ -1,0 +1,37 @@
+exampleφ: unit@AngleFromDeg (45.55697898318159);
+exampleψ: unit@AngleFromDeg (-122.65208039452712);
+
+tz_offset_hours: -8;
+degrees_per_tz_hour: 15.0;
+nominal_tz_long: unit@AngleFromDeg (tz_offset_hours * degrees_per_tz_hour);
+
+local_offset_from_tz_long: exampleψ - nominal_tz_long;
+
+local_offset_from_tz_minutes: Min[HourAngle] (HourAngle (local_offset_from_tz_long)) ();
+
+[foo, bar, baz]: HorizontalByDeclination (exampleφ, 1);
+
+numer: true;
+fpprintprec: 8;
+
+for foo1 in foo
+    do (print (foo1@Declination, foo1@Description),
+        for p in foo1@Points
+            do print (p),
+        print (""));
+
+for foo1 in foo
+    do (print (foo1@Declination, foo1@Description),
+        for p in foo1@Points
+            do print (p@H, H1: hour_angle_for_azimuth (exampleφ, ev (foo1@Declination), atan2 (p@X, p@Y)), H1 - p@H),
+        print (""));
+
+angles: [-180, -150, -135, -120, -90, -60, -45, -30, 0, 30, 45, 60, 90, 120, 135, 150, 180];
+
+hour_for_hour_angle (H) := 12 + H/%pi*180/15;
+
+for foo1 in foo
+    do (print (foo1@Declination, foo1@Description),
+        for A in angles
+            do print (A, H1: hour_angle_for_azimuth (exampleφ, ev (foo1@Declination), Rad[Angle] (AngleFromDeg (A))()), hour_for_hour_angle (H1)),
+        print (""));

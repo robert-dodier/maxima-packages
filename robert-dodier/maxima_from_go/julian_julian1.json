@@ -1,0 +1,3921 @@
+{
+   "Comments" : null,
+   "Decls" : [
+      {
+         "NodeType" : "GenDecl",
+         "Specs" : [
+            {
+               "Name" : null,
+               "NodeType" : "ImportSpec",
+               "Path" : {
+                  "Kind" : "STRING",
+                  "NodeType" : "BasicLit",
+                  "Value" : "\"math\""
+               }
+            },
+            {
+               "Name" : null,
+               "NodeType" : "ImportSpec",
+               "Path" : {
+                  "Kind" : "STRING",
+                  "NodeType" : "BasicLit",
+                  "Value" : "\"time\""
+               }
+            },
+            {
+               "Name" : null,
+               "NodeType" : "ImportSpec",
+               "Path" : {
+                  "Kind" : "STRING",
+                  "NodeType" : "BasicLit",
+                  "Value" : "\"github.com/soniakeys/meeus/v3/base\""
+               }
+            }
+         ],
+         "Tok" : "import"
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "Body" : {
+                     "List" : [
+                        {
+                           "Body" : [
+                              {
+                                 "NodeType" : "IncDecStmt",
+                                 "Tok" : "--",
+                                 "X" : {
+                                    "Name" : "y",
+                                    "NodeType" : "Ident"
+                                 }
+                              },
+                              {
+                                 "Lhs" : [
+                                    {
+                                       "Name" : "m",
+                                       "NodeType" : "Ident"
+                                    }
+                                 ],
+                                 "NodeType" : "AssignStmt",
+                                 "Rhs" : [
+                                    {
+                                       "Kind" : "INT",
+                                       "NodeType" : "BasicLit",
+                                       "Value" : "12"
+                                    }
+                                 ],
+                                 "Tok" : "+="
+                              }
+                           ],
+                           "List" : [
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "1"
+                              },
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "2"
+                              }
+                           ],
+                           "NodeType" : "CaseClause"
+                        }
+                     ],
+                     "NodeType" : "BlockStmt"
+                  },
+                  "Init" : null,
+                  "NodeType" : "SwitchStmt",
+                  "Tag" : {
+                     "Name" : "m",
+                     "NodeType" : "Ident"
+                  }
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "a",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "Name" : "y",
+                              "NodeType" : "Ident"
+                           },
+                           {
+                              "Kind" : "INT",
+                              "NodeType" : "BasicLit",
+                              "Value" : "100"
+                           }
+                        ],
+                        "Fun" : {
+                           "NodeType" : "SelectorExpr",
+                           "Sel" : {
+                              "Name" : "FloorDiv",
+                              "NodeType" : "Ident"
+                           },
+                           "X" : {
+                              "Name" : "base",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "b",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "+",
+                        "X" : {
+                           "NodeType" : "BinaryExpr",
+                           "Op" : "-",
+                           "X" : {
+                              "Kind" : "INT",
+                              "NodeType" : "BasicLit",
+                              "Value" : "2"
+                           },
+                           "Y" : {
+                              "Name" : "a",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "Y" : {
+                           "Args" : [
+                              {
+                                 "Name" : "a",
+                                 "NodeType" : "Ident"
+                              },
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "4"
+                              }
+                           ],
+                           "Fun" : {
+                              "NodeType" : "SelectorExpr",
+                              "Sel" : {
+                                 "Name" : "FloorDiv",
+                                 "NodeType" : "Ident"
+                              },
+                              "X" : {
+                                 "Name" : "base",
+                                 "NodeType" : "Ident"
+                              }
+                           },
+                           "NodeType" : "CallExpr"
+                        }
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "-",
+                        "X" : {
+                           "NodeType" : "BinaryExpr",
+                           "Op" : "+",
+                           "X" : {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "+",
+                              "X" : {
+                                 "Args" : [
+                                    {
+                                       "Args" : [
+                                          {
+                                             "NodeType" : "BinaryExpr",
+                                             "Op" : "*",
+                                             "X" : {
+                                                "Kind" : "INT",
+                                                "NodeType" : "BasicLit",
+                                                "Value" : "36525"
+                                             },
+                                             "Y" : {
+                                                "NodeType" : "ParenExpr",
+                                                "X" : {
+                                                   "Args" : [
+                                                      {
+                                                         "NodeType" : "BinaryExpr",
+                                                         "Op" : "+",
+                                                         "X" : {
+                                                            "Name" : "y",
+                                                            "NodeType" : "Ident"
+                                                         },
+                                                         "Y" : {
+                                                            "Kind" : "INT",
+                                                            "NodeType" : "BasicLit",
+                                                            "Value" : "4716"
+                                                         }
+                                                      }
+                                                   ],
+                                                   "Fun" : {
+                                                      "Name" : "int64",
+                                                      "NodeType" : "Ident"
+                                                   },
+                                                   "NodeType" : "CallExpr"
+                                                }
+                                             }
+                                          },
+                                          {
+                                             "Kind" : "INT",
+                                             "NodeType" : "BasicLit",
+                                             "Value" : "100"
+                                          }
+                                       ],
+                                       "Fun" : {
+                                          "NodeType" : "SelectorExpr",
+                                          "Sel" : {
+                                             "Name" : "FloorDiv64",
+                                             "NodeType" : "Ident"
+                                          },
+                                          "X" : {
+                                             "Name" : "base",
+                                             "NodeType" : "Ident"
+                                          }
+                                       },
+                                       "NodeType" : "CallExpr"
+                                    }
+                                 ],
+                                 "Fun" : {
+                                    "Name" : "float64",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "NodeType" : "CallExpr"
+                              },
+                              "Y" : {
+                                 "Args" : [
+                                    {
+                                       "NodeType" : "BinaryExpr",
+                                       "Op" : "+",
+                                       "X" : {
+                                          "Args" : [
+                                             {
+                                                "NodeType" : "BinaryExpr",
+                                                "Op" : "*",
+                                                "X" : {
+                                                   "Kind" : "INT",
+                                                   "NodeType" : "BasicLit",
+                                                   "Value" : "306"
+                                                },
+                                                "Y" : {
+                                                   "NodeType" : "ParenExpr",
+                                                   "X" : {
+                                                      "NodeType" : "BinaryExpr",
+                                                      "Op" : "+",
+                                                      "X" : {
+                                                         "Name" : "m",
+                                                         "NodeType" : "Ident"
+                                                      },
+                                                      "Y" : {
+                                                         "Kind" : "INT",
+                                                         "NodeType" : "BasicLit",
+                                                         "Value" : "1"
+                                                      }
+                                                   }
+                                                }
+                                             },
+                                             {
+                                                "Kind" : "INT",
+                                                "NodeType" : "BasicLit",
+                                                "Value" : "10"
+                                             }
+                                          ],
+                                          "Fun" : {
+                                             "NodeType" : "SelectorExpr",
+                                             "Sel" : {
+                                                "Name" : "FloorDiv",
+                                                "NodeType" : "Ident"
+                                             },
+                                             "X" : {
+                                                "Name" : "base",
+                                                "NodeType" : "Ident"
+                                             }
+                                          },
+                                          "NodeType" : "CallExpr"
+                                       },
+                                       "Y" : {
+                                          "Name" : "b",
+                                          "NodeType" : "Ident"
+                                       }
+                                    }
+                                 ],
+                                 "Fun" : {
+                                    "Name" : "float64",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "NodeType" : "CallExpr"
+                              }
+                           },
+                           "Y" : {
+                              "Name" : "d",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "Y" : {
+                           "Kind" : "FLOAT",
+                           "NodeType" : "BasicLit",
+                           "Value" : "1524.5"
+                        }
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "CalendarGregorianToJD",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "y",
+                           "NodeType" : "Ident"
+                        },
+                        {
+                           "Name" : "m",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  },
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "d",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "Body" : {
+                     "List" : [
+                        {
+                           "Body" : [
+                              {
+                                 "NodeType" : "IncDecStmt",
+                                 "Tok" : "--",
+                                 "X" : {
+                                    "Name" : "y",
+                                    "NodeType" : "Ident"
+                                 }
+                              },
+                              {
+                                 "Lhs" : [
+                                    {
+                                       "Name" : "m",
+                                       "NodeType" : "Ident"
+                                    }
+                                 ],
+                                 "NodeType" : "AssignStmt",
+                                 "Rhs" : [
+                                    {
+                                       "Kind" : "INT",
+                                       "NodeType" : "BasicLit",
+                                       "Value" : "12"
+                                    }
+                                 ],
+                                 "Tok" : "+="
+                              }
+                           ],
+                           "List" : [
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "1"
+                              },
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "2"
+                              }
+                           ],
+                           "NodeType" : "CaseClause"
+                        }
+                     ],
+                     "NodeType" : "BlockStmt"
+                  },
+                  "Init" : null,
+                  "NodeType" : "SwitchStmt",
+                  "Tag" : {
+                     "Name" : "m",
+                     "NodeType" : "Ident"
+                  }
+               },
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "-",
+                        "X" : {
+                           "NodeType" : "BinaryExpr",
+                           "Op" : "+",
+                           "X" : {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "+",
+                              "X" : {
+                                 "Args" : [
+                                    {
+                                       "Args" : [
+                                          {
+                                             "NodeType" : "BinaryExpr",
+                                             "Op" : "*",
+                                             "X" : {
+                                                "Kind" : "INT",
+                                                "NodeType" : "BasicLit",
+                                                "Value" : "36525"
+                                             },
+                                             "Y" : {
+                                                "NodeType" : "ParenExpr",
+                                                "X" : {
+                                                   "Args" : [
+                                                      {
+                                                         "NodeType" : "BinaryExpr",
+                                                         "Op" : "+",
+                                                         "X" : {
+                                                            "Name" : "y",
+                                                            "NodeType" : "Ident"
+                                                         },
+                                                         "Y" : {
+                                                            "Kind" : "INT",
+                                                            "NodeType" : "BasicLit",
+                                                            "Value" : "4716"
+                                                         }
+                                                      }
+                                                   ],
+                                                   "Fun" : {
+                                                      "Name" : "int64",
+                                                      "NodeType" : "Ident"
+                                                   },
+                                                   "NodeType" : "CallExpr"
+                                                }
+                                             }
+                                          },
+                                          {
+                                             "Kind" : "INT",
+                                             "NodeType" : "BasicLit",
+                                             "Value" : "100"
+                                          }
+                                       ],
+                                       "Fun" : {
+                                          "NodeType" : "SelectorExpr",
+                                          "Sel" : {
+                                             "Name" : "FloorDiv64",
+                                             "NodeType" : "Ident"
+                                          },
+                                          "X" : {
+                                             "Name" : "base",
+                                             "NodeType" : "Ident"
+                                          }
+                                       },
+                                       "NodeType" : "CallExpr"
+                                    }
+                                 ],
+                                 "Fun" : {
+                                    "Name" : "float64",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "NodeType" : "CallExpr"
+                              },
+                              "Y" : {
+                                 "Args" : [
+                                    {
+                                       "Args" : [
+                                          {
+                                             "NodeType" : "BinaryExpr",
+                                             "Op" : "*",
+                                             "X" : {
+                                                "Kind" : "INT",
+                                                "NodeType" : "BasicLit",
+                                                "Value" : "306"
+                                             },
+                                             "Y" : {
+                                                "NodeType" : "ParenExpr",
+                                                "X" : {
+                                                   "NodeType" : "BinaryExpr",
+                                                   "Op" : "+",
+                                                   "X" : {
+                                                      "Name" : "m",
+                                                      "NodeType" : "Ident"
+                                                   },
+                                                   "Y" : {
+                                                      "Kind" : "INT",
+                                                      "NodeType" : "BasicLit",
+                                                      "Value" : "1"
+                                                   }
+                                                }
+                                             }
+                                          },
+                                          {
+                                             "Kind" : "INT",
+                                             "NodeType" : "BasicLit",
+                                             "Value" : "10"
+                                          }
+                                       ],
+                                       "Fun" : {
+                                          "NodeType" : "SelectorExpr",
+                                          "Sel" : {
+                                             "Name" : "FloorDiv",
+                                             "NodeType" : "Ident"
+                                          },
+                                          "X" : {
+                                             "Name" : "base",
+                                             "NodeType" : "Ident"
+                                          }
+                                       },
+                                       "NodeType" : "CallExpr"
+                                    }
+                                 ],
+                                 "Fun" : {
+                                    "Name" : "float64",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "NodeType" : "CallExpr"
+                              }
+                           },
+                           "Y" : {
+                              "Name" : "d",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "Y" : {
+                           "Kind" : "FLOAT",
+                           "NodeType" : "BasicLit",
+                           "Value" : "1524.5"
+                        }
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "CalendarJulianToJD",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "y",
+                           "NodeType" : "Ident"
+                        },
+                        {
+                           "Name" : "m",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  },
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "d",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "==",
+                        "X" : {
+                           "NodeType" : "BinaryExpr",
+                           "Op" : "%",
+                           "X" : {
+                              "Name" : "y",
+                              "NodeType" : "Ident"
+                           },
+                           "Y" : {
+                              "Kind" : "INT",
+                              "NodeType" : "BasicLit",
+                              "Value" : "4"
+                           }
+                        },
+                        "Y" : {
+                           "Kind" : "INT",
+                           "NodeType" : "BasicLit",
+                           "Value" : "0"
+                        }
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "LeapYearJulian",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "y",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "bool",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "||",
+                        "X" : {
+                           "NodeType" : "ParenExpr",
+                           "X" : {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "&&",
+                              "X" : {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "==",
+                                 "X" : {
+                                    "NodeType" : "BinaryExpr",
+                                    "Op" : "%",
+                                    "X" : {
+                                       "Name" : "y",
+                                       "NodeType" : "Ident"
+                                    },
+                                    "Y" : {
+                                       "Kind" : "INT",
+                                       "NodeType" : "BasicLit",
+                                       "Value" : "4"
+                                    }
+                                 },
+                                 "Y" : {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "0"
+                                 }
+                              },
+                              "Y" : {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "!=",
+                                 "X" : {
+                                    "NodeType" : "BinaryExpr",
+                                    "Op" : "%",
+                                    "X" : {
+                                       "Name" : "y",
+                                       "NodeType" : "Ident"
+                                    },
+                                    "Y" : {
+                                       "Kind" : "INT",
+                                       "NodeType" : "BasicLit",
+                                       "Value" : "100"
+                                    }
+                                 },
+                                 "Y" : {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "0"
+                                 }
+                              }
+                           }
+                        },
+                        "Y" : {
+                           "NodeType" : "BinaryExpr",
+                           "Op" : "==",
+                           "X" : {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "%",
+                              "X" : {
+                                 "Name" : "y",
+                                 "NodeType" : "Ident"
+                              },
+                              "Y" : {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "400"
+                              }
+                           },
+                           "Y" : {
+                              "Kind" : "INT",
+                              "NodeType" : "BasicLit",
+                              "Value" : "0"
+                           }
+                        }
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "LeapYearGregorian",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "y",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "bool",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "zf",
+                        "NodeType" : "Ident"
+                     },
+                     {
+                        "Name" : "f",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "+",
+                              "X" : {
+                                 "Name" : "jd",
+                                 "NodeType" : "Ident"
+                              },
+                              "Y" : {
+                                 "Kind" : "FLOAT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : ".5"
+                              }
+                           }
+                        ],
+                        "Fun" : {
+                           "NodeType" : "SelectorExpr",
+                           "Sel" : {
+                              "Name" : "Modf",
+                              "NodeType" : "Ident"
+                           },
+                           "X" : {
+                              "Name" : "math",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "z",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "Name" : "zf",
+                              "NodeType" : "Ident"
+                           }
+                        ],
+                        "Fun" : {
+                           "Name" : "int64",
+                           "NodeType" : "Ident"
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "a",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Name" : "z",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Body" : {
+                     "List" : [
+                        {
+                           "Lhs" : [
+                              {
+                                 "Name" : "α",
+                                 "NodeType" : "Ident"
+                              }
+                           ],
+                           "NodeType" : "AssignStmt",
+                           "Rhs" : [
+                              {
+                                 "Args" : [
+                                    {
+                                       "NodeType" : "BinaryExpr",
+                                       "Op" : "-",
+                                       "X" : {
+                                          "NodeType" : "BinaryExpr",
+                                          "Op" : "*",
+                                          "X" : {
+                                             "Name" : "z",
+                                             "NodeType" : "Ident"
+                                          },
+                                          "Y" : {
+                                             "Kind" : "INT",
+                                             "NodeType" : "BasicLit",
+                                             "Value" : "100"
+                                          }
+                                       },
+                                       "Y" : {
+                                          "Kind" : "INT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "186721625"
+                                       }
+                                    },
+                                    {
+                                       "Kind" : "INT",
+                                       "NodeType" : "BasicLit",
+                                       "Value" : "3652425"
+                                    }
+                                 ],
+                                 "Fun" : {
+                                    "NodeType" : "SelectorExpr",
+                                    "Sel" : {
+                                       "Name" : "FloorDiv64",
+                                       "NodeType" : "Ident"
+                                    },
+                                    "X" : {
+                                       "Name" : "base",
+                                       "NodeType" : "Ident"
+                                    }
+                                 },
+                                 "NodeType" : "CallExpr"
+                              }
+                           ],
+                           "Tok" : ":="
+                        },
+                        {
+                           "Lhs" : [
+                              {
+                                 "Name" : "a",
+                                 "NodeType" : "Ident"
+                              }
+                           ],
+                           "NodeType" : "AssignStmt",
+                           "Rhs" : [
+                              {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "-",
+                                 "X" : {
+                                    "NodeType" : "BinaryExpr",
+                                    "Op" : "+",
+                                    "X" : {
+                                       "NodeType" : "BinaryExpr",
+                                       "Op" : "+",
+                                       "X" : {
+                                          "Name" : "z",
+                                          "NodeType" : "Ident"
+                                       },
+                                       "Y" : {
+                                          "Kind" : "INT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "1"
+                                       }
+                                    },
+                                    "Y" : {
+                                       "Name" : "α",
+                                       "NodeType" : "Ident"
+                                    }
+                                 },
+                                 "Y" : {
+                                    "Args" : [
+                                       {
+                                          "Name" : "α",
+                                          "NodeType" : "Ident"
+                                       },
+                                       {
+                                          "Kind" : "INT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "4"
+                                       }
+                                    ],
+                                    "Fun" : {
+                                       "NodeType" : "SelectorExpr",
+                                       "Sel" : {
+                                          "Name" : "FloorDiv64",
+                                          "NodeType" : "Ident"
+                                       },
+                                       "X" : {
+                                          "Name" : "base",
+                                          "NodeType" : "Ident"
+                                       }
+                                    },
+                                    "NodeType" : "CallExpr"
+                                 }
+                              }
+                           ],
+                           "Tok" : "="
+                        }
+                     ],
+                     "NodeType" : "BlockStmt"
+                  },
+                  "Cond" : {
+                     "NodeType" : "BinaryExpr",
+                     "Op" : ">=",
+                     "X" : {
+                        "Name" : "z",
+                        "NodeType" : "Ident"
+                     },
+                     "Y" : {
+                        "Kind" : "INT",
+                        "NodeType" : "BasicLit",
+                        "Value" : "2299151"
+                     }
+                  },
+                  "Else" : null,
+                  "Init" : null,
+                  "NodeType" : "IfStmt"
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "b",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "+",
+                        "X" : {
+                           "Name" : "a",
+                           "NodeType" : "Ident"
+                        },
+                        "Y" : {
+                           "Kind" : "INT",
+                           "NodeType" : "BasicLit",
+                           "Value" : "1524"
+                        }
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "c",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "-",
+                              "X" : {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "*",
+                                 "X" : {
+                                    "Name" : "b",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "Y" : {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "100"
+                                 }
+                              },
+                              "Y" : {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "12210"
+                              }
+                           },
+                           {
+                              "Kind" : "INT",
+                              "NodeType" : "BasicLit",
+                              "Value" : "36525"
+                           }
+                        ],
+                        "Fun" : {
+                           "NodeType" : "SelectorExpr",
+                           "Sel" : {
+                              "Name" : "FloorDiv64",
+                              "NodeType" : "Ident"
+                           },
+                           "X" : {
+                              "Name" : "base",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "d",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "*",
+                              "X" : {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "36525"
+                              },
+                              "Y" : {
+                                 "Name" : "c",
+                                 "NodeType" : "Ident"
+                              }
+                           },
+                           {
+                              "Kind" : "INT",
+                              "NodeType" : "BasicLit",
+                              "Value" : "100"
+                           }
+                        ],
+                        "Fun" : {
+                           "NodeType" : "SelectorExpr",
+                           "Sel" : {
+                              "Name" : "FloorDiv64",
+                              "NodeType" : "Ident"
+                           },
+                           "X" : {
+                              "Name" : "base",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "e",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "Args" : [
+                                 {
+                                    "NodeType" : "BinaryExpr",
+                                    "Op" : "*",
+                                    "X" : {
+                                       "NodeType" : "ParenExpr",
+                                       "X" : {
+                                          "NodeType" : "BinaryExpr",
+                                          "Op" : "-",
+                                          "X" : {
+                                             "Name" : "b",
+                                             "NodeType" : "Ident"
+                                          },
+                                          "Y" : {
+                                             "Name" : "d",
+                                             "NodeType" : "Ident"
+                                          }
+                                       }
+                                    },
+                                    "Y" : {
+                                       "Kind" : "FLOAT",
+                                       "NodeType" : "BasicLit",
+                                       "Value" : "1e4"
+                                    }
+                                 },
+                                 {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "306001"
+                                 }
+                              ],
+                              "Fun" : {
+                                 "NodeType" : "SelectorExpr",
+                                 "Sel" : {
+                                    "Name" : "FloorDiv64",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "X" : {
+                                    "Name" : "base",
+                                    "NodeType" : "Ident"
+                                 }
+                              },
+                              "NodeType" : "CallExpr"
+                           }
+                        ],
+                        "Fun" : {
+                           "Name" : "int",
+                           "NodeType" : "Ident"
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "day",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "+",
+                        "X" : {
+                           "Args" : [
+                              {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "-",
+                                 "X" : {
+                                    "Args" : [
+                                       {
+                                          "NodeType" : "BinaryExpr",
+                                          "Op" : "-",
+                                          "X" : {
+                                             "Name" : "b",
+                                             "NodeType" : "Ident"
+                                          },
+                                          "Y" : {
+                                             "Name" : "d",
+                                             "NodeType" : "Ident"
+                                          }
+                                       }
+                                    ],
+                                    "Fun" : {
+                                       "Name" : "int",
+                                       "NodeType" : "Ident"
+                                    },
+                                    "NodeType" : "CallExpr"
+                                 },
+                                 "Y" : {
+                                    "Args" : [
+                                       {
+                                          "NodeType" : "BinaryExpr",
+                                          "Op" : "*",
+                                          "X" : {
+                                             "Kind" : "INT",
+                                             "NodeType" : "BasicLit",
+                                             "Value" : "306001"
+                                          },
+                                          "Y" : {
+                                             "Name" : "e",
+                                             "NodeType" : "Ident"
+                                          }
+                                       },
+                                       {
+                                          "Kind" : "FLOAT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "1e4"
+                                       }
+                                    ],
+                                    "Fun" : {
+                                       "NodeType" : "SelectorExpr",
+                                       "Sel" : {
+                                          "Name" : "FloorDiv",
+                                          "NodeType" : "Ident"
+                                       },
+                                       "X" : {
+                                          "Name" : "base",
+                                          "NodeType" : "Ident"
+                                       }
+                                    },
+                                    "NodeType" : "CallExpr"
+                                 }
+                              }
+                           ],
+                           "Fun" : {
+                              "Name" : "float64",
+                              "NodeType" : "Ident"
+                           },
+                           "NodeType" : "CallExpr"
+                        },
+                        "Y" : {
+                           "Name" : "f",
+                           "NodeType" : "Ident"
+                        }
+                     }
+                  ],
+                  "Tok" : "="
+               },
+               {
+                  "Body" : {
+                     "List" : [
+                        {
+                           "Body" : [
+                              {
+                                 "Lhs" : [
+                                    {
+                                       "Name" : "month",
+                                       "NodeType" : "Ident"
+                                    }
+                                 ],
+                                 "NodeType" : "AssignStmt",
+                                 "Rhs" : [
+                                    {
+                                       "NodeType" : "BinaryExpr",
+                                       "Op" : "-",
+                                       "X" : {
+                                          "Name" : "e",
+                                          "NodeType" : "Ident"
+                                       },
+                                       "Y" : {
+                                          "Kind" : "INT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "1"
+                                       }
+                                    }
+                                 ],
+                                 "Tok" : "="
+                              }
+                           ],
+                           "List" : null,
+                           "NodeType" : "CaseClause"
+                        },
+                        {
+                           "Body" : [
+                              {
+                                 "Lhs" : [
+                                    {
+                                       "Name" : "month",
+                                       "NodeType" : "Ident"
+                                    }
+                                 ],
+                                 "NodeType" : "AssignStmt",
+                                 "Rhs" : [
+                                    {
+                                       "NodeType" : "BinaryExpr",
+                                       "Op" : "-",
+                                       "X" : {
+                                          "Name" : "e",
+                                          "NodeType" : "Ident"
+                                       },
+                                       "Y" : {
+                                          "Kind" : "INT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "13"
+                                       }
+                                    }
+                                 ],
+                                 "Tok" : "="
+                              }
+                           ],
+                           "List" : [
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "14"
+                              },
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "15"
+                              }
+                           ],
+                           "NodeType" : "CaseClause"
+                        }
+                     ],
+                     "NodeType" : "BlockStmt"
+                  },
+                  "Init" : null,
+                  "NodeType" : "SwitchStmt",
+                  "Tag" : {
+                     "Name" : "e",
+                     "NodeType" : "Ident"
+                  }
+               },
+               {
+                  "Body" : {
+                     "List" : [
+                        {
+                           "Body" : [
+                              {
+                                 "Lhs" : [
+                                    {
+                                       "Name" : "year",
+                                       "NodeType" : "Ident"
+                                    }
+                                 ],
+                                 "NodeType" : "AssignStmt",
+                                 "Rhs" : [
+                                    {
+                                       "NodeType" : "BinaryExpr",
+                                       "Op" : "-",
+                                       "X" : {
+                                          "Args" : [
+                                             {
+                                                "Name" : "c",
+                                                "NodeType" : "Ident"
+                                             }
+                                          ],
+                                          "Fun" : {
+                                             "Name" : "int",
+                                             "NodeType" : "Ident"
+                                          },
+                                          "NodeType" : "CallExpr"
+                                       },
+                                       "Y" : {
+                                          "Kind" : "INT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "4716"
+                                       }
+                                    }
+                                 ],
+                                 "Tok" : "="
+                              }
+                           ],
+                           "List" : null,
+                           "NodeType" : "CaseClause"
+                        },
+                        {
+                           "Body" : [
+                              {
+                                 "Lhs" : [
+                                    {
+                                       "Name" : "year",
+                                       "NodeType" : "Ident"
+                                    }
+                                 ],
+                                 "NodeType" : "AssignStmt",
+                                 "Rhs" : [
+                                    {
+                                       "NodeType" : "BinaryExpr",
+                                       "Op" : "-",
+                                       "X" : {
+                                          "Args" : [
+                                             {
+                                                "Name" : "c",
+                                                "NodeType" : "Ident"
+                                             }
+                                          ],
+                                          "Fun" : {
+                                             "Name" : "int",
+                                             "NodeType" : "Ident"
+                                          },
+                                          "NodeType" : "CallExpr"
+                                       },
+                                       "Y" : {
+                                          "Kind" : "INT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "4715"
+                                       }
+                                    }
+                                 ],
+                                 "Tok" : "="
+                              }
+                           ],
+                           "List" : [
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "1"
+                              },
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "2"
+                              }
+                           ],
+                           "NodeType" : "CaseClause"
+                        }
+                     ],
+                     "NodeType" : "BlockStmt"
+                  },
+                  "Init" : null,
+                  "NodeType" : "SwitchStmt",
+                  "Tag" : {
+                     "Name" : "month",
+                     "NodeType" : "Ident"
+                  }
+               },
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : null
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "JDToCalendar",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "jd",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "year",
+                           "NodeType" : "Ident"
+                        },
+                        {
+                           "Name" : "month",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  },
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "day",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "zf",
+                        "NodeType" : "Ident"
+                     },
+                     {
+                        "Name" : "f",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "+",
+                              "X" : {
+                                 "Name" : "jd",
+                                 "NodeType" : "Ident"
+                              },
+                              "Y" : {
+                                 "Kind" : "FLOAT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : ".5"
+                              }
+                           }
+                        ],
+                        "Fun" : {
+                           "NodeType" : "SelectorExpr",
+                           "Sel" : {
+                              "Name" : "Modf",
+                              "NodeType" : "Ident"
+                           },
+                           "X" : {
+                              "Name" : "math",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "z",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "Name" : "zf",
+                              "NodeType" : "Ident"
+                           }
+                        ],
+                        "Fun" : {
+                           "Name" : "int64",
+                           "NodeType" : "Ident"
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "α",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "-",
+                              "X" : {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "*",
+                                 "X" : {
+                                    "Name" : "z",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "Y" : {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "100"
+                                 }
+                              },
+                              "Y" : {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "186721625"
+                              }
+                           },
+                           {
+                              "Kind" : "INT",
+                              "NodeType" : "BasicLit",
+                              "Value" : "3652425"
+                           }
+                        ],
+                        "Fun" : {
+                           "NodeType" : "SelectorExpr",
+                           "Sel" : {
+                              "Name" : "FloorDiv64",
+                              "NodeType" : "Ident"
+                           },
+                           "X" : {
+                              "Name" : "base",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "a",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "-",
+                        "X" : {
+                           "NodeType" : "BinaryExpr",
+                           "Op" : "+",
+                           "X" : {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "+",
+                              "X" : {
+                                 "Name" : "z",
+                                 "NodeType" : "Ident"
+                              },
+                              "Y" : {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "1"
+                              }
+                           },
+                           "Y" : {
+                              "Name" : "α",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "Y" : {
+                           "Args" : [
+                              {
+                                 "Name" : "α",
+                                 "NodeType" : "Ident"
+                              },
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "4"
+                              }
+                           ],
+                           "Fun" : {
+                              "NodeType" : "SelectorExpr",
+                              "Sel" : {
+                                 "Name" : "FloorDiv64",
+                                 "NodeType" : "Ident"
+                              },
+                              "X" : {
+                                 "Name" : "base",
+                                 "NodeType" : "Ident"
+                              }
+                           },
+                           "NodeType" : "CallExpr"
+                        }
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "b",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "+",
+                        "X" : {
+                           "Name" : "a",
+                           "NodeType" : "Ident"
+                        },
+                        "Y" : {
+                           "Kind" : "INT",
+                           "NodeType" : "BasicLit",
+                           "Value" : "1524"
+                        }
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "c",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "-",
+                              "X" : {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "*",
+                                 "X" : {
+                                    "Name" : "b",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "Y" : {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "100"
+                                 }
+                              },
+                              "Y" : {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "12210"
+                              }
+                           },
+                           {
+                              "Kind" : "INT",
+                              "NodeType" : "BasicLit",
+                              "Value" : "36525"
+                           }
+                        ],
+                        "Fun" : {
+                           "NodeType" : "SelectorExpr",
+                           "Sel" : {
+                              "Name" : "FloorDiv64",
+                              "NodeType" : "Ident"
+                           },
+                           "X" : {
+                              "Name" : "base",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "d",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "*",
+                              "X" : {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "36525"
+                              },
+                              "Y" : {
+                                 "Name" : "c",
+                                 "NodeType" : "Ident"
+                              }
+                           },
+                           {
+                              "Kind" : "INT",
+                              "NodeType" : "BasicLit",
+                              "Value" : "100"
+                           }
+                        ],
+                        "Fun" : {
+                           "NodeType" : "SelectorExpr",
+                           "Sel" : {
+                              "Name" : "FloorDiv64",
+                              "NodeType" : "Ident"
+                           },
+                           "X" : {
+                              "Name" : "base",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "e",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "Args" : [
+                                 {
+                                    "NodeType" : "BinaryExpr",
+                                    "Op" : "*",
+                                    "X" : {
+                                       "NodeType" : "ParenExpr",
+                                       "X" : {
+                                          "NodeType" : "BinaryExpr",
+                                          "Op" : "-",
+                                          "X" : {
+                                             "Name" : "b",
+                                             "NodeType" : "Ident"
+                                          },
+                                          "Y" : {
+                                             "Name" : "d",
+                                             "NodeType" : "Ident"
+                                          }
+                                       }
+                                    },
+                                    "Y" : {
+                                       "Kind" : "FLOAT",
+                                       "NodeType" : "BasicLit",
+                                       "Value" : "1e4"
+                                    }
+                                 },
+                                 {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "306001"
+                                 }
+                              ],
+                              "Fun" : {
+                                 "NodeType" : "SelectorExpr",
+                                 "Sel" : {
+                                    "Name" : "FloorDiv64",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "X" : {
+                                    "Name" : "base",
+                                    "NodeType" : "Ident"
+                                 }
+                              },
+                              "NodeType" : "CallExpr"
+                           }
+                        ],
+                        "Fun" : {
+                           "Name" : "int",
+                           "NodeType" : "Ident"
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "day",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "+",
+                        "X" : {
+                           "Args" : [
+                              {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "-",
+                                 "X" : {
+                                    "Args" : [
+                                       {
+                                          "NodeType" : "BinaryExpr",
+                                          "Op" : "-",
+                                          "X" : {
+                                             "Name" : "b",
+                                             "NodeType" : "Ident"
+                                          },
+                                          "Y" : {
+                                             "Name" : "d",
+                                             "NodeType" : "Ident"
+                                          }
+                                       }
+                                    ],
+                                    "Fun" : {
+                                       "Name" : "int",
+                                       "NodeType" : "Ident"
+                                    },
+                                    "NodeType" : "CallExpr"
+                                 },
+                                 "Y" : {
+                                    "Args" : [
+                                       {
+                                          "NodeType" : "BinaryExpr",
+                                          "Op" : "*",
+                                          "X" : {
+                                             "Kind" : "INT",
+                                             "NodeType" : "BasicLit",
+                                             "Value" : "306001"
+                                          },
+                                          "Y" : {
+                                             "Name" : "e",
+                                             "NodeType" : "Ident"
+                                          }
+                                       },
+                                       {
+                                          "Kind" : "FLOAT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "1e4"
+                                       }
+                                    ],
+                                    "Fun" : {
+                                       "NodeType" : "SelectorExpr",
+                                       "Sel" : {
+                                          "Name" : "FloorDiv",
+                                          "NodeType" : "Ident"
+                                       },
+                                       "X" : {
+                                          "Name" : "base",
+                                          "NodeType" : "Ident"
+                                       }
+                                    },
+                                    "NodeType" : "CallExpr"
+                                 }
+                              }
+                           ],
+                           "Fun" : {
+                              "Name" : "float64",
+                              "NodeType" : "Ident"
+                           },
+                           "NodeType" : "CallExpr"
+                        },
+                        "Y" : {
+                           "Name" : "f",
+                           "NodeType" : "Ident"
+                        }
+                     }
+                  ],
+                  "Tok" : "="
+               },
+               {
+                  "Body" : {
+                     "List" : [
+                        {
+                           "Body" : [
+                              {
+                                 "Lhs" : [
+                                    {
+                                       "Name" : "month",
+                                       "NodeType" : "Ident"
+                                    }
+                                 ],
+                                 "NodeType" : "AssignStmt",
+                                 "Rhs" : [
+                                    {
+                                       "NodeType" : "BinaryExpr",
+                                       "Op" : "-",
+                                       "X" : {
+                                          "Name" : "e",
+                                          "NodeType" : "Ident"
+                                       },
+                                       "Y" : {
+                                          "Kind" : "INT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "1"
+                                       }
+                                    }
+                                 ],
+                                 "Tok" : "="
+                              }
+                           ],
+                           "List" : null,
+                           "NodeType" : "CaseClause"
+                        },
+                        {
+                           "Body" : [
+                              {
+                                 "Lhs" : [
+                                    {
+                                       "Name" : "month",
+                                       "NodeType" : "Ident"
+                                    }
+                                 ],
+                                 "NodeType" : "AssignStmt",
+                                 "Rhs" : [
+                                    {
+                                       "NodeType" : "BinaryExpr",
+                                       "Op" : "-",
+                                       "X" : {
+                                          "Name" : "e",
+                                          "NodeType" : "Ident"
+                                       },
+                                       "Y" : {
+                                          "Kind" : "INT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "13"
+                                       }
+                                    }
+                                 ],
+                                 "Tok" : "="
+                              }
+                           ],
+                           "List" : [
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "14"
+                              },
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "15"
+                              }
+                           ],
+                           "NodeType" : "CaseClause"
+                        }
+                     ],
+                     "NodeType" : "BlockStmt"
+                  },
+                  "Init" : null,
+                  "NodeType" : "SwitchStmt",
+                  "Tag" : {
+                     "Name" : "e",
+                     "NodeType" : "Ident"
+                  }
+               },
+               {
+                  "Body" : {
+                     "List" : [
+                        {
+                           "Body" : [
+                              {
+                                 "Lhs" : [
+                                    {
+                                       "Name" : "year",
+                                       "NodeType" : "Ident"
+                                    }
+                                 ],
+                                 "NodeType" : "AssignStmt",
+                                 "Rhs" : [
+                                    {
+                                       "NodeType" : "BinaryExpr",
+                                       "Op" : "-",
+                                       "X" : {
+                                          "Args" : [
+                                             {
+                                                "Name" : "c",
+                                                "NodeType" : "Ident"
+                                             }
+                                          ],
+                                          "Fun" : {
+                                             "Name" : "int",
+                                             "NodeType" : "Ident"
+                                          },
+                                          "NodeType" : "CallExpr"
+                                       },
+                                       "Y" : {
+                                          "Kind" : "INT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "4716"
+                                       }
+                                    }
+                                 ],
+                                 "Tok" : "="
+                              }
+                           ],
+                           "List" : null,
+                           "NodeType" : "CaseClause"
+                        },
+                        {
+                           "Body" : [
+                              {
+                                 "Lhs" : [
+                                    {
+                                       "Name" : "year",
+                                       "NodeType" : "Ident"
+                                    }
+                                 ],
+                                 "NodeType" : "AssignStmt",
+                                 "Rhs" : [
+                                    {
+                                       "NodeType" : "BinaryExpr",
+                                       "Op" : "-",
+                                       "X" : {
+                                          "Args" : [
+                                             {
+                                                "Name" : "c",
+                                                "NodeType" : "Ident"
+                                             }
+                                          ],
+                                          "Fun" : {
+                                             "Name" : "int",
+                                             "NodeType" : "Ident"
+                                          },
+                                          "NodeType" : "CallExpr"
+                                       },
+                                       "Y" : {
+                                          "Kind" : "INT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "4715"
+                                       }
+                                    }
+                                 ],
+                                 "Tok" : "="
+                              }
+                           ],
+                           "List" : [
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "1"
+                              },
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "2"
+                              }
+                           ],
+                           "NodeType" : "CaseClause"
+                        }
+                     ],
+                     "NodeType" : "BlockStmt"
+                  },
+                  "Init" : null,
+                  "NodeType" : "SwitchStmt",
+                  "Tag" : {
+                     "Name" : "month",
+                     "NodeType" : "Ident"
+                  }
+               },
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : null
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "jdToCalendarGregorian",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "jd",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "year",
+                           "NodeType" : "Ident"
+                        },
+                        {
+                           "Name" : "month",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  },
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "day",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "y",
+                        "NodeType" : "Ident"
+                     },
+                     {
+                        "Name" : "m",
+                        "NodeType" : "Ident"
+                     },
+                     {
+                        "Name" : "d",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "Name" : "jd",
+                              "NodeType" : "Ident"
+                           }
+                        ],
+                        "Fun" : {
+                           "Name" : "jdToCalendarGregorian",
+                           "NodeType" : "Ident"
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "t",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "Name" : "y",
+                              "NodeType" : "Ident"
+                           },
+                           {
+                              "Args" : [
+                                 {
+                                    "Name" : "m",
+                                    "NodeType" : "Ident"
+                                 }
+                              ],
+                              "Fun" : {
+                                 "NodeType" : "SelectorExpr",
+                                 "Sel" : {
+                                    "Name" : "Month",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "X" : {
+                                    "Name" : "time",
+                                    "NodeType" : "Ident"
+                                 }
+                              },
+                              "NodeType" : "CallExpr"
+                           },
+                           {
+                              "Kind" : "INT",
+                              "NodeType" : "BasicLit",
+                              "Value" : "0"
+                           },
+                           {
+                              "Kind" : "INT",
+                              "NodeType" : "BasicLit",
+                              "Value" : "0"
+                           },
+                           {
+                              "Kind" : "INT",
+                              "NodeType" : "BasicLit",
+                              "Value" : "0"
+                           },
+                           {
+                              "Kind" : "INT",
+                              "NodeType" : "BasicLit",
+                              "Value" : "0"
+                           },
+                           {
+                              "Kind" : "INT",
+                              "NodeType" : "BasicLit",
+                              "Value" : "0"
+                           },
+                           {
+                              "NodeType" : "SelectorExpr",
+                              "Sel" : {
+                                 "Name" : "UTC",
+                                 "NodeType" : "Ident"
+                              },
+                              "X" : {
+                                 "Name" : "time",
+                                 "NodeType" : "Ident"
+                              }
+                           }
+                        ],
+                        "Fun" : {
+                           "NodeType" : "SelectorExpr",
+                           "Sel" : {
+                              "Name" : "Date",
+                              "NodeType" : "Ident"
+                           },
+                           "X" : {
+                              "Name" : "time",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "Args" : [
+                           {
+                              "Args" : [
+                                 {
+                                    "NodeType" : "BinaryExpr",
+                                    "Op" : "*",
+                                    "X" : {
+                                       "NodeType" : "BinaryExpr",
+                                       "Op" : "*",
+                                       "X" : {
+                                          "Name" : "d",
+                                          "NodeType" : "Ident"
+                                       },
+                                       "Y" : {
+                                          "Kind" : "INT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "24"
+                                       }
+                                    },
+                                    "Y" : {
+                                       "Args" : [
+                                          {
+                                             "NodeType" : "SelectorExpr",
+                                             "Sel" : {
+                                                "Name" : "Hour",
+                                                "NodeType" : "Ident"
+                                             },
+                                             "X" : {
+                                                "Name" : "time",
+                                                "NodeType" : "Ident"
+                                             }
+                                          }
+                                       ],
+                                       "Fun" : {
+                                          "Name" : "float64",
+                                          "NodeType" : "Ident"
+                                       },
+                                       "NodeType" : "CallExpr"
+                                    }
+                                 }
+                              ],
+                              "Fun" : {
+                                 "NodeType" : "SelectorExpr",
+                                 "Sel" : {
+                                    "Name" : "Duration",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "X" : {
+                                    "Name" : "time",
+                                    "NodeType" : "Ident"
+                                 }
+                              },
+                              "NodeType" : "CallExpr"
+                           }
+                        ],
+                        "Fun" : {
+                           "NodeType" : "SelectorExpr",
+                           "Sel" : {
+                              "Name" : "Add",
+                              "NodeType" : "Ident"
+                           },
+                           "X" : {
+                              "Name" : "t",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "JDToTime",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "jd",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "NodeType" : "SelectorExpr",
+                        "Sel" : {
+                           "Name" : "Time",
+                           "NodeType" : "Ident"
+                        },
+                        "X" : {
+                           "Name" : "time",
+                           "NodeType" : "Ident"
+                        }
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "ut",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : null,
+                        "Fun" : {
+                           "NodeType" : "SelectorExpr",
+                           "Sel" : {
+                              "Name" : "UTC",
+                              "NodeType" : "Ident"
+                           },
+                           "X" : {
+                              "Name" : "t",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "y",
+                        "NodeType" : "Ident"
+                     },
+                     {
+                        "Name" : "m",
+                        "NodeType" : "Ident"
+                     },
+                     {
+                        "Name" : "_",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : null,
+                        "Fun" : {
+                           "NodeType" : "SelectorExpr",
+                           "Sel" : {
+                              "Name" : "Date",
+                              "NodeType" : "Ident"
+                           },
+                           "X" : {
+                              "Name" : "ut",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "d",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Args" : [
+                           {
+                              "Args" : [
+                                 {
+                                    "Name" : "y",
+                                    "NodeType" : "Ident"
+                                 },
+                                 {
+                                    "Name" : "m",
+                                    "NodeType" : "Ident"
+                                 },
+                                 {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "0"
+                                 },
+                                 {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "0"
+                                 },
+                                 {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "0"
+                                 },
+                                 {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "0"
+                                 },
+                                 {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "0"
+                                 },
+                                 {
+                                    "NodeType" : "SelectorExpr",
+                                    "Sel" : {
+                                       "Name" : "UTC",
+                                       "NodeType" : "Ident"
+                                    },
+                                    "X" : {
+                                       "Name" : "time",
+                                       "NodeType" : "Ident"
+                                    }
+                                 }
+                              ],
+                              "Fun" : {
+                                 "NodeType" : "SelectorExpr",
+                                 "Sel" : {
+                                    "Name" : "Date",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "X" : {
+                                    "Name" : "time",
+                                    "NodeType" : "Ident"
+                                 }
+                              },
+                              "NodeType" : "CallExpr"
+                           }
+                        ],
+                        "Fun" : {
+                           "NodeType" : "SelectorExpr",
+                           "Sel" : {
+                              "Name" : "Sub",
+                              "NodeType" : "Ident"
+                           },
+                           "X" : {
+                              "Name" : "ut",
+                              "NodeType" : "Ident"
+                           }
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "Args" : [
+                           {
+                              "Name" : "y",
+                              "NodeType" : "Ident"
+                           },
+                           {
+                              "Args" : [
+                                 {
+                                    "Name" : "m",
+                                    "NodeType" : "Ident"
+                                 }
+                              ],
+                              "Fun" : {
+                                 "Name" : "int",
+                                 "NodeType" : "Ident"
+                              },
+                              "NodeType" : "CallExpr"
+                           },
+                           {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "/",
+                              "X" : {
+                                 "Args" : [
+                                    {
+                                       "Name" : "d",
+                                       "NodeType" : "Ident"
+                                    }
+                                 ],
+                                 "Fun" : {
+                                    "Name" : "float64",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "NodeType" : "CallExpr"
+                              },
+                              "Y" : {
+                                 "Args" : [
+                                    {
+                                       "NodeType" : "BinaryExpr",
+                                       "Op" : "*",
+                                       "X" : {
+                                          "Kind" : "INT",
+                                          "NodeType" : "BasicLit",
+                                          "Value" : "24"
+                                       },
+                                       "Y" : {
+                                          "NodeType" : "SelectorExpr",
+                                          "Sel" : {
+                                             "Name" : "Hour",
+                                             "NodeType" : "Ident"
+                                          },
+                                          "X" : {
+                                             "Name" : "time",
+                                             "NodeType" : "Ident"
+                                          }
+                                       }
+                                    }
+                                 ],
+                                 "Fun" : {
+                                    "Name" : "float64",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "NodeType" : "CallExpr"
+                              }
+                           }
+                        ],
+                        "Fun" : {
+                           "Name" : "CalendarGregorianToJD",
+                           "NodeType" : "Ident"
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "TimeToJD",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "t",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "NodeType" : "SelectorExpr",
+                        "Sel" : {
+                           "Name" : "Time",
+                           "NodeType" : "Ident"
+                        },
+                        "X" : {
+                           "Name" : "time",
+                           "NodeType" : "Ident"
+                        }
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "%",
+                        "X" : {
+                           "Args" : [
+                              {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "+",
+                                 "X" : {
+                                    "Name" : "jd",
+                                    "NodeType" : "Ident"
+                                 },
+                                 "Y" : {
+                                    "Kind" : "FLOAT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "1.5"
+                                 }
+                              }
+                           ],
+                           "Fun" : {
+                              "Name" : "int",
+                              "NodeType" : "Ident"
+                           },
+                           "NodeType" : "CallExpr"
+                        },
+                        "Y" : {
+                           "Kind" : "INT",
+                           "NodeType" : "BasicLit",
+                           "Value" : "7"
+                        }
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "DayOfWeek",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "jd",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "float64",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "Args" : [
+                           {
+                              "Name" : "y",
+                              "NodeType" : "Ident"
+                           },
+                           {
+                              "Name" : "m",
+                              "NodeType" : "Ident"
+                           },
+                           {
+                              "Name" : "d",
+                              "NodeType" : "Ident"
+                           },
+                           {
+                              "Args" : [
+                                 {
+                                    "Name" : "y",
+                                    "NodeType" : "Ident"
+                                 }
+                              ],
+                              "Fun" : {
+                                 "Name" : "LeapYearGregorian",
+                                 "NodeType" : "Ident"
+                              },
+                              "NodeType" : "CallExpr"
+                           }
+                        ],
+                        "Fun" : {
+                           "Name" : "DayOfYear",
+                           "NodeType" : "Ident"
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "DayOfYearGregorian",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "y",
+                           "NodeType" : "Ident"
+                        },
+                        {
+                           "Name" : "m",
+                           "NodeType" : "Ident"
+                        },
+                        {
+                           "Name" : "d",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "Args" : [
+                           {
+                              "Name" : "y",
+                              "NodeType" : "Ident"
+                           },
+                           {
+                              "Name" : "m",
+                              "NodeType" : "Ident"
+                           },
+                           {
+                              "Name" : "d",
+                              "NodeType" : "Ident"
+                           },
+                           {
+                              "Args" : [
+                                 {
+                                    "Name" : "y",
+                                    "NodeType" : "Ident"
+                                 }
+                              ],
+                              "Fun" : {
+                                 "Name" : "LeapYearJulian",
+                                 "NodeType" : "Ident"
+                              },
+                              "NodeType" : "CallExpr"
+                           }
+                        ],
+                        "Fun" : {
+                           "Name" : "DayOfYear",
+                           "NodeType" : "Ident"
+                        },
+                        "NodeType" : "CallExpr"
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "DayOfYearJulian",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "y",
+                           "NodeType" : "Ident"
+                        },
+                        {
+                           "Name" : "m",
+                           "NodeType" : "Ident"
+                        },
+                        {
+                           "Name" : "d",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "k",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Kind" : "INT",
+                        "NodeType" : "BasicLit",
+                        "Value" : "2"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Body" : {
+                     "List" : [
+                        {
+                           "NodeType" : "IncDecStmt",
+                           "Tok" : "--",
+                           "X" : {
+                              "Name" : "k",
+                              "NodeType" : "Ident"
+                           }
+                        }
+                     ],
+                     "NodeType" : "BlockStmt"
+                  },
+                  "Cond" : {
+                     "Name" : "leap",
+                     "NodeType" : "Ident"
+                  },
+                  "Else" : null,
+                  "Init" : null,
+                  "NodeType" : "IfStmt"
+               },
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "+",
+                        "X" : {
+                           "Args" : [
+                              {
+                                 "Name" : "m",
+                                 "NodeType" : "Ident"
+                              },
+                              {
+                                 "Name" : "k",
+                                 "NodeType" : "Ident"
+                              }
+                           ],
+                           "Fun" : {
+                              "Name" : "wholeMonths",
+                              "NodeType" : "Ident"
+                           },
+                           "NodeType" : "CallExpr"
+                        },
+                        "Y" : {
+                           "Name" : "d",
+                           "NodeType" : "Ident"
+                        }
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "DayOfYear",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "y",
+                           "NodeType" : "Ident"
+                        },
+                        {
+                           "Name" : "m",
+                           "NodeType" : "Ident"
+                        },
+                        {
+                           "Name" : "d",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  },
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "leap",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "bool",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "Lhs" : [
+                     {
+                        "Name" : "k",
+                        "NodeType" : "Ident"
+                     }
+                  ],
+                  "NodeType" : "AssignStmt",
+                  "Rhs" : [
+                     {
+                        "Kind" : "INT",
+                        "NodeType" : "BasicLit",
+                        "Value" : "2"
+                     }
+                  ],
+                  "Tok" : ":="
+               },
+               {
+                  "Body" : {
+                     "List" : [
+                        {
+                           "NodeType" : "IncDecStmt",
+                           "Tok" : "--",
+                           "X" : {
+                              "Name" : "k",
+                              "NodeType" : "Ident"
+                           }
+                        }
+                     ],
+                     "NodeType" : "BlockStmt"
+                  },
+                  "Cond" : {
+                     "Name" : "leap",
+                     "NodeType" : "Ident"
+                  },
+                  "Else" : null,
+                  "Init" : null,
+                  "NodeType" : "IfStmt"
+               },
+               {
+                  "Body" : {
+                     "List" : [
+                        {
+                           "Lhs" : [
+                              {
+                                 "Name" : "m",
+                                 "NodeType" : "Ident"
+                              }
+                           ],
+                           "NodeType" : "AssignStmt",
+                           "Rhs" : [
+                              {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "1"
+                              }
+                           ],
+                           "Tok" : "="
+                        }
+                     ],
+                     "NodeType" : "BlockStmt"
+                  },
+                  "Cond" : {
+                     "NodeType" : "BinaryExpr",
+                     "Op" : "<",
+                     "X" : {
+                        "Name" : "n",
+                        "NodeType" : "Ident"
+                     },
+                     "Y" : {
+                        "Kind" : "INT",
+                        "NodeType" : "BasicLit",
+                        "Value" : "32"
+                     }
+                  },
+                  "Else" : {
+                     "List" : [
+                        {
+                           "Lhs" : [
+                              {
+                                 "Name" : "m",
+                                 "NodeType" : "Ident"
+                              }
+                           ],
+                           "NodeType" : "AssignStmt",
+                           "Rhs" : [
+                              {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "/",
+                                 "X" : {
+                                    "NodeType" : "ParenExpr",
+                                    "X" : {
+                                       "NodeType" : "BinaryExpr",
+                                       "Op" : "+",
+                                       "X" : {
+                                          "NodeType" : "BinaryExpr",
+                                          "Op" : "*",
+                                          "X" : {
+                                             "Kind" : "INT",
+                                             "NodeType" : "BasicLit",
+                                             "Value" : "900"
+                                          },
+                                          "Y" : {
+                                             "NodeType" : "ParenExpr",
+                                             "X" : {
+                                                "NodeType" : "BinaryExpr",
+                                                "Op" : "+",
+                                                "X" : {
+                                                   "Name" : "k",
+                                                   "NodeType" : "Ident"
+                                                },
+                                                "Y" : {
+                                                   "Name" : "n",
+                                                   "NodeType" : "Ident"
+                                                }
+                                             }
+                                          }
+                                       },
+                                       "Y" : {
+                                          "NodeType" : "BinaryExpr",
+                                          "Op" : "*",
+                                          "X" : {
+                                             "Kind" : "INT",
+                                             "NodeType" : "BasicLit",
+                                             "Value" : "98"
+                                          },
+                                          "Y" : {
+                                             "Kind" : "INT",
+                                             "NodeType" : "BasicLit",
+                                             "Value" : "275"
+                                          }
+                                       }
+                                    }
+                                 },
+                                 "Y" : {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "27500"
+                                 }
+                              }
+                           ],
+                           "Tok" : "="
+                        }
+                     ],
+                     "NodeType" : "BlockStmt"
+                  },
+                  "Init" : null,
+                  "NodeType" : "IfStmt"
+               },
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "Name" : "m",
+                        "NodeType" : "Ident"
+                     },
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "-",
+                        "X" : {
+                           "Name" : "n",
+                           "NodeType" : "Ident"
+                        },
+                        "Y" : {
+                           "Args" : [
+                              {
+                                 "Name" : "m",
+                                 "NodeType" : "Ident"
+                              },
+                              {
+                                 "Name" : "k",
+                                 "NodeType" : "Ident"
+                              }
+                           ],
+                           "Fun" : {
+                              "Name" : "wholeMonths",
+                              "NodeType" : "Ident"
+                           },
+                           "NodeType" : "CallExpr"
+                        }
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "DayOfYearToCalendar",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "n",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  },
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "leap",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "bool",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "m",
+                           "NodeType" : "Ident"
+                        },
+                        {
+                           "Name" : "d",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      },
+      {
+         "Body" : {
+            "List" : [
+               {
+                  "NodeType" : "ReturnStmt",
+                  "Results" : [
+                     {
+                        "NodeType" : "BinaryExpr",
+                        "Op" : "-",
+                        "X" : {
+                           "NodeType" : "BinaryExpr",
+                           "Op" : "-",
+                           "X" : {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "/",
+                              "X" : {
+                                 "NodeType" : "BinaryExpr",
+                                 "Op" : "*",
+                                 "X" : {
+                                    "Kind" : "INT",
+                                    "NodeType" : "BasicLit",
+                                    "Value" : "275"
+                                 },
+                                 "Y" : {
+                                    "Name" : "m",
+                                    "NodeType" : "Ident"
+                                 }
+                              },
+                              "Y" : {
+                                 "Kind" : "INT",
+                                 "NodeType" : "BasicLit",
+                                 "Value" : "9"
+                              }
+                           },
+                           "Y" : {
+                              "NodeType" : "BinaryExpr",
+                              "Op" : "*",
+                              "X" : {
+                                 "Name" : "k",
+                                 "NodeType" : "Ident"
+                              },
+                              "Y" : {
+                                 "NodeType" : "ParenExpr",
+                                 "X" : {
+                                    "NodeType" : "BinaryExpr",
+                                    "Op" : "/",
+                                    "X" : {
+                                       "NodeType" : "ParenExpr",
+                                       "X" : {
+                                          "NodeType" : "BinaryExpr",
+                                          "Op" : "+",
+                                          "X" : {
+                                             "Name" : "m",
+                                             "NodeType" : "Ident"
+                                          },
+                                          "Y" : {
+                                             "Kind" : "INT",
+                                             "NodeType" : "BasicLit",
+                                             "Value" : "9"
+                                          }
+                                       }
+                                    },
+                                    "Y" : {
+                                       "Kind" : "INT",
+                                       "NodeType" : "BasicLit",
+                                       "Value" : "12"
+                                    }
+                                 }
+                              }
+                           }
+                        },
+                        "Y" : {
+                           "Kind" : "INT",
+                           "NodeType" : "BasicLit",
+                           "Value" : "30"
+                        }
+                     }
+                  ]
+               }
+            ],
+            "NodeType" : "BlockStmt"
+         },
+         "Name" : {
+            "Name" : "wholeMonths",
+            "NodeType" : "Ident"
+         },
+         "NodeType" : "FuncDecl",
+         "Recv" : null,
+         "Type" : {
+            "NodeType" : "FuncType",
+            "Params" : {
+               "List" : [
+                  {
+                     "Names" : [
+                        {
+                           "Name" : "m",
+                           "NodeType" : "Ident"
+                        },
+                        {
+                           "Name" : "k",
+                           "NodeType" : "Ident"
+                        }
+                     ],
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "Results" : {
+               "List" : [
+                  {
+                     "Names" : null,
+                     "NodeType" : "Field",
+                     "Type" : {
+                        "Name" : "int",
+                        "NodeType" : "Ident"
+                     }
+                  }
+               ],
+               "NodeType" : "FieldList"
+            },
+            "TypeParams" : null
+         }
+      }
+   ],
+   "Doc" : null,
+   "FileSet" : {
+      "Base" : 5525,
+      "Files" : [
+         {
+            "Base" : 1,
+            "Infos" : null,
+            "Lines" : [
+               0,
+               29,
+               45,
+               46,
+               80,
+               83,
+               159,
+               234,
+               304,
+               356,
+               359,
+               434,
+               443,
+               446,
+               519,
+               534,
+               549,
+               550,
+               559,
+               567,
+               575,
+               576,
+               614,
+               616,
+               617,
+               693,
+               711,
+               714,
+               786,
+               808,
+               866,
+               878,
+               890,
+               896,
+               906,
+               909,
+               937,
+               971,
+               987,
+               1050,
+               1105,
+               1107,
+               1108,
+               1193,
+               1196,
+               1268,
+               1290,
+               1345,
+               1357,
+               1369,
+               1375,
+               1385,
+               1388,
+               1451,
+               1504,
+               1506,
+               1507,
+               1587,
+               1621,
+               1638,
+               1640,
+               1641,
+               1727,
+               1764,
+               1811,
+               1813,
+               1814,
+               1874,
+               1877,
+               1953,
+               1982,
+               2045,
+               2074,
+               2090,
+               2098,
+               2117,
+               2167,
+               2209,
+               2212,
+               2227,
+               2269,
+               2305,
+               2351,
+               2377,
+               2435,
+               2447,
+               2457,
+               2473,
+               2487,
+               2504,
+               2507,
+               2523,
+               2533,
+               2556,
+               2568,
+               2591,
+               2594,
+               2602,
+               2604,
+               2605,
+               2684,
+               2687,
+               2763,
+               2835,
+               2912,
+               2984,
+               3013,
+               3029,
+               3078,
+               3120,
+               3135,
+               3177,
+               3213,
+               3259,
+               3285,
+               3343,
+               3355,
+               3365,
+               3381,
+               3395,
+               3412,
+               3415,
+               3431,
+               3441,
+               3464,
+               3476,
+               3499,
+               3502,
+               3510,
+               3512,
+               3513,
+               3570,
+               3608,
+               3642,
+               3680,
+               3739,
+               3797,
+               3799,
+               3800,
+               3862,
+               3865,
+               3933,
+               3952,
+               3989,
+               4004,
+               4026,
+               4081,
+               4115,
+               4190,
+               4192,
+               4193,
+               4253,
+               4256,
+               4332,
+               4408,
+               4432,
+               4465,
+               4489,
+               4491,
+               4492,
+               4571,
+               4584,
+               4627,
+               4676,
+               4678,
+               4679,
+               4752,
+               4765,
+               4805,
+               4851,
+               4853,
+               4854,
+               4908,
+               4911,
+               4983,
+               5050,
+               5095,
+               5103,
+               5114,
+               5120,
+               5123,
+               5153,
+               5155,
+               5156,
+               5226,
+               5263,
+               5319,
+               5327,
+               5338,
+               5344,
+               5347,
+               5360,
+               5368,
+               5378,
+               5413,
+               5416,
+               5449,
+               5451,
+               5452,
+               5485,
+               5521
+            ],
+            "Name" : "v3/julian/julian.go",
+            "Size" : 5523
+         }
+      ]
+   },
+   "Imports" : null,
+   "Name" : {
+      "Name" : "julian",
+      "NodeType" : "Ident"
+   },
+   "NodeType" : "File",
+   "Package" : null,
+   "Unresolved" : null
+}

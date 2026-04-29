@@ -1,0 +1,15 @@
+ 
+GenDecl("Specs" = [ImportSpec("Name" = null,"Path" = "math")],"Tok" = "import")$
+ 
+ 
+GenDecl("Specs" = [TypeSpec("Name" = Angle,"Type" = float64,"TypeParams" = null)],"Tok" = "type")$
+ 
+ 
+GenDecl("Specs" = [TypeSpec("Name" = HourAngle,"Type" = float64,"TypeParams" = null)],"Tok" = "type")$
+ 
+ 
+GenDecl("Specs" = [TypeSpec("Name" = RA,"Type" = float64,"TypeParams" = null)],"Tok" = "type")$
+ 
+ 
+GenDecl("Specs" = [TypeSpec("Name" = Time,"Type" = float64,"TypeParams" = null)],"Tok" = "type")$
+ 

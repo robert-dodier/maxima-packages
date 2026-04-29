@@ -1,0 +1,62 @@
+matchdeclare ([aa, bb, cc], all);
+matchdeclare (dd, lambda ([e], not atom(e) and op(e) = 'degrees));
+
+announce_rules_firing: false; /* change this to true to get info about tellsimpafter rules being applied */
+
+tellsimpafter (degrees (dd), dd);
+
+tellsimpafter (degrees (from_radians (aa)), degrees (aa*180/%pi));
+
+tellsimpafter (radians (from_degrees (dd)), %pi/180*(degrees_degrees (dd) + degrees_minutes (dd) / 60 + degrees_seconds (dd) / 3600));
+
+tellsimpafter (degrees_degrees (dd), if length (dd) >= 1 then first (dd) else 0);
+tellsimpafter (degrees_minutes (dd), if length (dd) >= 2 then second (dd) else 0);
+tellsimpafter (degrees_seconds (dd), if length (dd) >= 3 then third (dd) else 0);
+
+tellsimpafter (aa + dd, aa + (if op(dd) = 'degrees then dd else add_degrees (args (dd))));
+
+add_degrees (d_list) :=
+    block ([listarith: true],
+           canonical_degrees (lsum (degrees_minutes_seconds (d), d, d_list)));
+
+canonical_degrees (l) :=
+    block ([d, m, m_carry, s, s_carry],
+           s: mod (third (l), 60),
+           s_carry: (third (l) - s) / 60,
+           m: mod (second (l) + s_carry, 60),
+           m_carry: (second (l) + s_carry - m) / 60,
+           d: mod (first (l) + m_carry, 360),
+           if m = 0 and s = 0 then degrees (d)
+               elseif s = 0 then degrees (d, m)
+               else degrees (d, m, s));
+
+degrees_minutes_seconds (d) :=
+    if length (d) = 3 then args (d)
+        elseif length (d) = 2 then [ first (d), second (d), 0 ]
+        elseif length (d) = 1 then [ first (d), 0, 0 ]
+        else error ("degrees_minutes_seconds: not sure what to do with", d);
+
+/* reflection rule is applied when degrees(...) is an argument of a trig function;
+ * try to keep that from causing trouble
+ */
+
+matchdeclare (pp, lambda ([e], sign (e) = 'pos));
+
+/* not sure what to do with degrees(...) times another degrees(...) -- let it stand unmodified for now, may reconsider */
+tellsimpafter (pp * dd, if op (dd) = 'degrees then  multiply_degrees (pp, dd) else dd);
+
+multiply_degrees (a, d) :=
+    block ([listarith: true],
+           canonical_degrees (a * degrees_minutes_seconds (d)));
+
+matchdeclare (tt, trigfunp);
+trigfunp (e) := atom(e) and member (e, '[ sin, cos, tan, sec, csc, cot ]);
+
+defrule (trig_with_degrees_rule, tt (dd), tt (radians (from_degrees (dd))));
+
+trig_with_degrees (e) := apply1 (e, trig_with_degrees_rule);
+
+matchdeclare (nn, integerp);
+
+tellsimpafter ('diff (degrees (aa), aa, nn), if nn = 1 then %pi/180 else 0);
+

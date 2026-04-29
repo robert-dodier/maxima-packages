@@ -46,8 +46,6 @@ hours_from_tz_offset_zz (zz) :=
         then - hours_from_tz_offset_zz (- zz)
         else floor (zz / 100) + mod (zz, 100) / 60;
 
-load ("sregex");
-
 defstruct (mdy (mo, d, y));
 defstruct (mdy_hm (mo, d, y, h, mi));
 defstruct (mdy_hms (mo, d, y, h, mi, s));

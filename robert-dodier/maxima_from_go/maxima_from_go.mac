@@ -1,3 +1,8 @@
+load ("/home/dodier/github/github-forks/maxima-packages/robert-dodier/lexical_symbols/lexical_symbols.lisp");
+load ("/home/dodier/github/github-forks/maxima-packages/robert-dodier/lexical_symbols/with-lexical-environment.lisp");
+load ("/home/dodier/github/github-forks/maxima-packages/robert-dodier/lexical_symbols/mlambda.lisp");
+load ("/home/dodier/github/github-forks/maxima-packages/robert-dodier/lexical_symbols/meval.lisp");
+
 load ("math_go.mac");
 load ("base_go.mac");
 
@@ -80,8 +85,20 @@ default_value_for (type) :=
 /* would prefer to have funmake here instead of apply, but funmake barfs on aa being a general expression; that's a bug in funmake !! */
 defrule (funcall_no_args_from_CallExpr, CallExpr("Args" = null, "Fun" = aa), if mapatom (aa) then funmake (aa, []) else apply (aa, []));
 defrule (funcall_from_CallExpr, CallExpr("Args" = ll, "Fun" = aa), if mapatom (aa) then funmake (aa, ll) else apply (aa, ll));
-defrule (equality_from_BinaryExpr_with_equalsequals, BinaryExpr ("Op" = "==", "X" = aa, "Y" = bb), funmake ('equal, [aa, bb]));
-defrule (expr_from_BinaryExpr, BinaryExpr ("Op" = ss, "X" = aa, "Y" = bb), funmake (ss, [aa, bb]));
+
+substitutes_for_builtin_ops: [
+    "%" = 'mod,
+    "==" = 'equal, "!=" = 'notequal,
+    "&&" = "and", "||" = "or", "!" = "not",
+    "&" = bit_and, "|" = bit_or, "^" = bit_xor, "&^" = lambda ([x, y], bit_and (x, bit_not (y))),
+    "<<" = bit_lsh, ">>" = bit_rsh
+ ];
+
+maybe_substitute_for_builtin_ops (f) :=
+    block ([g: assoc (f, substitutes_for_builtin_ops)], if g # false then g else f);
+
+defrule (expr_from_BinaryExpr, BinaryExpr ("Op" = ss, "X" = aa, "Y" = bb), funmake (maybe_substitute_for_builtin_ops (ss), [aa, bb]));
+
 defrule (expr_from_UnaryExpr, UnaryExpr ("Op" = ss, "X" = aa), funmake (ss, [aa]));
 
 /* return(...) in Go is a nonlocal return, so implement ReturnStmt as throw(...) in Maxima.
@@ -125,7 +142,12 @@ defrule (local_var_assignment_from_AssignStmt, AssignStmt ("Lhs" = ll, "Rhs" = m
 
 matchdeclare (xx, symbolp);
 
-defrule (assignment_from_ValueSpec_Type_null_Values_nonnull,
+matchdeclare (ppmm, lambda ([e], e = "++" or e = "--"));
+
+defrule (assignment_from_IncDecStmt, IncDecStmt ("Tok" = ppmm, "X" = xx),
+         buildq ([o: if ppmm = "++" then "+" else "-"], xx: o(xx, 1)));
+
+defrule (assignment_from_ValueSpec_Type_null_Values_nonnull_Tok_var,
          GenDecl ("Specs" = [ValueSpec ("Names" = [xx], "Type" = null, "Values" = [ll])], "Tok" = "var"),
          /* was: buildq ([xx, ll], var (xx) : ll));
           * but then there is a var(foo): ... at the top level,
@@ -133,6 +155,21 @@ defrule (assignment_from_ValueSpec_Type_null_Values_nonnull,
           * dunno how to distinguish top-level ValueSpec from ones which are in a block. !!
           */
          buildq ([xx, ll], xx : ll));
+
+matchdeclare (vv, lambda ([e], listp(e) and every (lambda ([e1], not atom(e1) and op(e1) = 'ValueSpec), e)));
+
+defrule (assignments_from_ValueSpecs_Tok_const,
+         GenDecl ("Specs" = vv, "Tok" = "const"),
+         funmake (verbify ("block"), map (lambda ([e], apply1 (e, assignment_from_ValueSpec_Type_null_Values_nonnull)), vv)));
+
+defrule (assignment_from_ValueSpec_Type_null_Values_nonnull,
+         ValueSpec ("Names" = [xx], "Type" = null, "Values" = ll),
+         /* A bit of do-what-I-mean, guessing the intent here:
+          * If the righthand side is a single value,
+          * assign just that value, otherwise, assign the whole list.
+          * That fails if the intent is to assign a list comprising exactly one element.
+          */
+         buildq ([xx, yy: if length (ll) = 1 then ll[1] else ll], (declare (xx, constant), xx : yy)));
 
 matchdeclare (yy, lambda ([e], e # null));
 
@@ -154,6 +191,36 @@ defrule (if_then_from_IfStmt,
 defrule (if_then_else_from_IfStmt,
          IfStmt ("Body" = aa, "Cond" = bb, "Else" = cc, "Init" = null),
          buildq ([aa, bb, cc], if bb then aa else cc));
+
+defrule (if_then_else_from_SwitchStmt,
+         SwitchStmt ("Body" = aa, "Init" = null, "Tag" = bb),
+         construct_if_then_else_from_switch_body (aa, bb));
+
+construct_if_then_else_from_switch_body (body, tag) :=
+    block ([default_case, default_case1, default_case0, nondefault_cases, nondefault_cases1, if_then_else],
+           sublist (args (body), lambda ([e], second (e) = [])),
+           default_case: if length (%%) = 0 then false
+                             elseif length (%%) = 1 then %%[1]
+                             else error ("partition_cases: appears to be more than one default in switch"),
+grind ("default_case =", default_case),
+           default_case0: assoc ("Body", default_case),
+grind ("default_case0 =", default_case0),
+           default_case1: if default_case0 = false then [true, false] else [true, buildq ([e: default_case0], ?mprogn (splice (e)))],
+           /* default_case1: if default_case0 = false then [true, false] else [true, funmake ('bolck, default_case0)], */
+grind ("default_case1 =", default_case1),
+           nondefault_cases: sublist (args (body), lambda ([e], second (e) # [])),
+grind ("nondefault_cases =", nondefault_cases),
+           map (lambda ([e], [ rework_condition_for_case (second (e), tag), funmake ('?mprogn, assoc ("Body", e)) ]), nondefault_cases),
+           nondefault_cases1: apply (append, %%),
+grind ("nondefault_cases1 =", nondefault_cases1),
+           if_then_else: apply ("if", append (nondefault_cases1, default_case1)),
+grind ("if_then_else =", if_then_else),
+           if_then_else);
+
+rework_condition_for_case (l, tag) :=
+    if tag = null
+        then apply ("or", l)
+        else apply ("or", map (lambda ([x], equal (tag, x)), l));
 
 /* match FuncDecl with "Recv" = null; that's an ordinary function.
  * Additionally match "TypeParams" = null; not sure yet what to do otherwise.
@@ -264,11 +331,11 @@ apply_all_rules (b) :=
     block ([e1, e2, e3, e4, e4a, e4b, e5, e6, e7, e8, e9, e10],
            e1: scanmap (expr_from_blob, b),
            e2: apply1 (e1, symbol_from_Ident, string_from_BasicLit, integer_from_BasicLit, float_from_BasicLit, character_from_BasicLit, list_from_null_List, list_from_List, list_from_FieldList, list_from_CompositeLit_Type_null, list_from_CompositeLit_Type_ArrayType_StructType, list_from_CompositeLit_Type_ArrayType_simple, expr_from_ParenExpr, struct_from_CompositeLit_Type_nonnull_key_value_elements, struct_from_CompositeLit_Type_nonnull_simple_elements),
-           e3: apply1 (e2, funcall_no_args_from_CallExpr, funcall_from_CallExpr, equality_from_BinaryExpr_with_equalsequals, expr_from_BinaryExpr, expr_from_UnaryExpr, defstruct_from_TypeSpec_StructType),
+           e3: apply1 (e2, funcall_no_args_from_CallExpr, funcall_from_CallExpr, expr_from_BinaryExpr, expr_from_UnaryExpr, defstruct_from_TypeSpec_StructType),
            e4: apply1 (e3, throw_from_ReturnStmt_null, throw_from_ReturnStmt, block_from_BlockStmt, local_var_assignment_from_AssignStmt),
-           e4a: apply1 (e4, assignment_from_AssignStmt, assignment_with_addition_from_AssignStmt, assignment_with_subtraction_from_AssignStmt, if_then_from_IfStmt, assignment_from_ValueSpec_Type_null_Values_nonnull, assignment_from_ValueSpec_Type_nonnull_Values_null),
+           e4a: apply1 (e4, assignment_from_AssignStmt, assignment_with_addition_from_AssignStmt, assignment_with_subtraction_from_AssignStmt, if_then_from_IfStmt, assignment_from_ValueSpec_Type_null_Values_nonnull_Tok_var, assignments_from_ValueSpecs_Tok_const, assignment_from_ValueSpec_Type_nonnull_Values_null, assignment_from_IncDecStmt),
            e4b: lift_local_vars_into_block (e4a),
-           e5: apply1 (e4b, if_then_else_from_IfStmt, at_sign_from_SelectorExpr, for_loop_from_ForStmt, for_loop_from_RangeStmt),
+           e5: apply1 (e4b, if_then_else_from_IfStmt, if_then_else_from_SwitchStmt, at_sign_from_SelectorExpr, for_loop_from_ForStmt, for_loop_from_RangeStmt),
            e6: apply1 (e5, function_from_FuncDecl_function, function_from_FuncDecl_method),
            methods_list_names_only: setify (map (op, methods_list)),
            e7: apply1 (e6, rewrite_method_calls_no_args, rewrite_method_calls_one_arg),
@@ -281,7 +348,7 @@ lift_local_vars_into_block (e) :=
     scanmap (lift_local_vars_into_block1, e);
 
 lift_local_vars_into_block1 (e) :=
-    if not atom(e) and op(e) = block
+    if not atom(e) and op(e) = verbify ("block")
         then block ([vars: [], exprs: [], existing_vars: []],
                     for e1 in (if length (e) > 0 and listp (first (e)) then (existing_vars: first (e), rest (e)) else e)
                         do (if match_local_var_assignment (e1) # false

@@ -1,0 +1,9 @@
+load ("translation_from_go_json.mac");
+
+translate_from_go_json ("unit");
+translate_from_go_json ("solar");
+translate_from_go_json ("nutation");
+translate_from_go_json ("sundial");
+translate_from_go_json ("base_julian");
+translate_from_go_json ("julian_julian");
+
