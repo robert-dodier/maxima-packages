@@ -1,0 +1,88 @@
+/* assume that degrees.lisp and degrees.mac are already loaded */
+
+degrees (60);
+degrees (60);
+
+degrees (60.125);
+degrees (60.125);
+
+radians (from_degrees (degrees (60)));
+%pi/3;
+
+degrees (from_radians (%pi/3));
+degrees (60);
+
+radians (from_degrees (degrees (x, y, z)));
+%pi/180*(x + y/60 + z/3600);
+
+degrees (from_radians (a));
+degrees (a*180/%pi);
+
+/* not canonicalized to -degrees(60); subject to change */
+degrees (-60);
+degrees (-60);
+
+2 * degrees (-60);
+- degrees (120);
+
+-2 * degrees (60);
+- degrees (120);
+
+degrees (450);
+degrees (450);
+
+/* not canonicalized to degrees(1); subject to change */
+degrees (0, 60);
+degrees (0, 60);
+
+- degrees (15) - degrees (25);
+- degrees (40);
+
+degrees (60) - degrees (15) - degrees (25);
+degrees (20);
+
+degrees (15) + degrees (50);
+degrees (65);
+
+degrees (15) + degrees (50) - degrees (19);
+degrees (46);
+
+- degrees (15, 20) - degrees (25, 50, 32);
+- degrees (41, 10, 32);
+
+degrees (60) - degrees (15, 20) - degrees (25, 50, 32);
+degrees (18, 49, 28);
+
+degrees (15, 25, 48) + degrees (50);
+degrees (65, 25, 48);
+
+degrees (15, 25, 48) + degrees (50) - degrees (19);
+degrees (46, 25, 48);
+
+2 * degrees (0, 30);
+degrees (1);
+
+60 * degrees (0, 0, 1);
+degrees (0, 1);
+
+3600 * degrees (0, 0, 1);
+degrees (1);
+
+12 * degrees (17, 29, 42);
+degrees (209, 56, 24);
+
+-12 * degrees (17, 29, 42);
+- degrees (209, 56, 24);
+
+trig_with_degrees ((1 + cos (degrees (x)))/(1 - sin (degrees (y))));
+(1 + cos (%pi/180*x))/(1 - sin (%pi/180*y));
+
+diff (sin (degrees (u)) / (1 + exp (degrees (u))), u);
+(%pi*cos(degrees(u)))/(180*(%e^degrees(u)+1))
+-(%e^degrees(u)*%pi*sin(degrees(u)))/(180*(%e^degrees(u)+1)^2);
+
+diff (sin (degrees (u)) / (1 + exp (degrees (u))), u, 2);
+-((%pi^2*sin(degrees(u)))/(32400*(%e^degrees(u)+1)))
+-(%e^degrees(u)*%pi^2*sin(degrees(u)))/(32400*(%e^degrees(u)+1)^2)
++(%e^degrees(2*u)*%pi^2*sin(degrees(u)))/(16200*(%e^degrees(u)+1)^3)
+-(%e^degrees(u)*%pi^2*cos(degrees(u)))/(16200*(%e^degrees(u)+1)^2);
