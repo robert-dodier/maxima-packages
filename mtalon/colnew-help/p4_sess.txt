@@ -1,0 +1,26 @@
+
+Maxima 5.48.1 https://maxima.sourceforge.io
+using Lisp SBCL 2.5.8
+
+(%i1) load("p4.mac");
+Give the list of variable and functions in equations, like [x,F,G] 
+Define the list of the differential equations. 
+Define the  4 boundary conditions. 
+The array tol is filled by default, you can edit tol 
+ncomp =  3 , m_list =  [2, 1, 1] , mstar =  4 , ntol =  4 , max_subst_list =  
+                                                             dp
+                                          [f3 = z4, f2 = z3, ── = z2, p = z1]  
+                                                             dt
+ZETA:  [0.0, 1.0, 1.0, 1.9] 
+ipar:  [1, 3, 5, 4, 40000, 2500, 0, 0, 1, 0, 1] 
+ltol:  [1, 2, 3, 4] 
+tol:  [1.0e-5, 1.0e-5, 1.0e-5, 1.0e-5] 
+fixpnt:  [1.0] 
+Please give floating numerical values to parameters. 
+
+Entering a Maxima break point. Type 'exit;' to resume.
+_exit;
+(%o1)                               p4.mac
+(%i2) time(%);
+(%o2)                             [4.053542]
+(%i3) 

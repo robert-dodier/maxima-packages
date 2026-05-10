@@ -1,0 +1,28 @@
+/* Boundary layer on a rotating disk. */
+
+n:0.2$ cons:0.5*(3.0-n)$ aleft:0$ aright:1$ ntol:2$
+depends([G,H],x)$
+lvfs:[x,G,H]$
+list_of_eqns: [diff(G,x,2)  = L^2*s*(G-1)-L*((3-n)/2*H*diff(G,x,1)+(n-1)*diff(H,x,1)*G),
+ diff(H,x,3) = L^3*(1-G^2)+L^2*s*diff(H,x,1)-L*((3-n)/2*H*diff(H,x,2)+n*(diff(H,x,1))^2)]$
+list_of_conds: [G(0)=0,H(0)=0,(G-1)(1)=0,diff(H,x,1)(0)=0,diff(H,x,1)(1)=0]$
+list_of_guess:[1.0-exp(-L*x),-L^2*x^2*exp(-L*x)]$
+
+load("colnew_help.mac")$
+
+xx:makelist(0.01*k,k,0,100)$
+ck:1$
+
+use_result():= (
+  zvals: colnew_appsln(xx, mstar, fspace, ispace),
+  hvals:makelist(zvals[k][1],k,1,101))$ 
+
+list_of_params:[[0.2,60.0],[0.1,120.0],[0.05,200.0]]$ /* successive values of [s,L] */
+
+for param in list_of_params do (
+  [s,L]:param,
+  print("s = ",s,"L= ",L),
+  run_colnew(),
+  plot2d([discrete,L*xx,hvals]),
+  ?sleep(floor(2/ck)), /* Sleep 2s, then 1s, finally 0s. */
+  ck:ck+1)$

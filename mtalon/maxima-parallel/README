@@ -1,0 +1,23 @@
+"distribute_over_tranches" is a program by R. Dodier whose aim is to
+parallelize the execution of maxima by sending computations to several
+Unix processes, and collecting the results in the main program. As such it
+uses interprocess communication and requires a maxima compiled with sbcl.
+It can be found in R. Dodier folder of maxima-packages.
+
+The present version "distribute_over_tranches_mt.lisp" is a modification of
+the original one making more use of specific sbcl features to simplify
+the interprocess communication, and with the addition of handlers for
+several possible error situations.
+
+Finally "distribute_over_tranches_thread.lisp" is another way to
+achieve the same parallelism, using threads in just one Unix
+process. Here we use the sbcl threading support.
+
+Both versions run the examples in R. Dodier folder with the same
+result as his one. These examples show that it is possible to run long
+maxima computations by distributing them in several processes or
+threads. Of course a much more extensive example set would be
+necessary.
+
+Ref. https://github.com/robert-dodier/maxima-packages/tree/master/robert-dodier/distribute_over_tranches.
+The sbcl documentation, including looking at the source code.

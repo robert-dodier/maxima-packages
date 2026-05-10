@@ -1,0 +1,76 @@
+/* The quantum harmonic oscillator, for state n=6. It is numerically hard
+and requires to increase the number of collocation points per interval and
+the number of initial subintervals. */
+
+L:10.0$ aleft:0$ aright:L$ ntol:3$
+depends([p,e],x)$ lvfs:[x,p,e]$
+list_of_eqns:[diff(p,x,2)=x^2*p-2.0*e*p,diff(e,x,1)=0]$
+list_of_conds:[(p-1)(0)=0,diff(p,x,1)(0)=0,p(L)=0]$
+list_of_guess:[(1.0-x^4)*exp(-x^2/2),7.0]$ /* guess for p and for e */
+
+load("colnew_help.mac")$
+
+/* With guess [(1.0+x^6)*exp(-x^2/2),7.0] 
+set ipar:[1,4,5,3,8000,500,1,0,1,0,0]$
+at the break point or the result is wrong.
+Also set tol:[1d-6,1d-6,1d-6]$ */
+
+xx:makelist(L/100*k,k,0,99)$
+
+use_result():= (
+  zvals: colnew_appsln(xx, mstar, fspace, ispace),
+  hvals:makelist(zvals[k][1],k,1,100))$
+
+run_colnew()$
+
+ratprint:false$
+exact:makelist(float(ratsubst(0.1*k,x,hermite(6,x)))/(-120)*exp(-(0.1*k)^2/2),k,0,99)$
+print(" e = ", zvals[1][3])$
+
+plot2d([[discrete,xx,hvals],[discrete,xx,exact]],[style, points, lines],
+  [point_type,plus],[legend,"colnew","hermite"])$
+
+
+/* This gives the following maxima session  */
+
+/* (%i1) load("osc2.mac")$ */
+/* Give the list of variable and functions in equations, like [x,F,G]  */
+/* Define the list of the differential equations.  */
+/* Define the  3 boundary conditions.  */
+/* The array tol is filled by default, you can edit tol  */
+/* ncomp =  2 , m_list =  [2, 1] , mstar =  3 , ntol =  3  */
+/*                              dp */
+/* , max_subst_list =  [e = z3, ── = z2, p = z1]  */
+/*                              dx */
+/* ZETA:  [0.0, 0.0, 10.0]  */
+/* ipar:  [1, 2, 5, 3, 40000, 2500, 0, 0, 1, 0, 0]  */
+/* ltol:  [1, 2, 3]  */
+/* tol:  [1.0e-5, 1.0e-5, 1.0e-5]  */
+/* fixpnt:  []  */
+/* Please give floating numerical values to parameters.  */
+
+/* Entering a Maxima break point. Type 'exit;' to resume. */
+/* _ipar:[1,4,5,3,8000,500,1,0,1,0,0]$ */
+/* [1, 4, 5, 3, 8000, 500, 1, 0, 1, 0, 0] */
+/* _tol:[1d-6,1d-6,1d-6]$ */
+/* [1.0e-6, 1.0e-6, 1.0e-6] */
+/* _exit; */
+/*  e =  6.499999997869993   that is n+1/2 with n=6 */
+/* (%o1)                              osc2.mac */
+/* A perfect plot appears. */
+/* (%i2) time(%); */
+/* (%o2)                             [0.679482] */
+
+/* Problem: why is the correct result so sensible to ipar, and to what ? */
+/* setting the number of collocation points ipar[2] to 4 is not sufficient. */
+/* The computation converges much slower to the solution for n=8 instead of 6 */
+/* Setting ipar:[1, 2, 10, 3, 40000, 2500, -1, 0, 1, 0, 0] works OK. */
+/* Setting both ipar[2]:4 and ipar[3]:10 works very well and fast. Strangely */
+/* with the standard ipar  [1, 2, 5, 3 ..] but the guess p=(1.0-x^4)*exp(-x^2/2) */
+/* the solution is fine with n=6. If one changes the guess to */
+/*  p=(1.0+4.0*x^4)*exp(-x^2/2) one obtains the solution for n=30! Recall: */
+/* hermite(6,x) = -(120*(-((8*x^6)/15)+4*x^4-6*x^2+1)) */
+/* Amusingly one can take the guess p=cos(%pi*x/4) and obtain the correct */
+/* solution, for n=6. With other values of the angle, different values of */
+/* n appear. */
+

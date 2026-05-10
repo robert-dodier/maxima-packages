@@ -1,0 +1,33 @@
+/* This is Example 4 with the notations as in
+http://arxiv.org/pdf/hep-th/0407005 */
+
+y:1.9d0$ aleft : 0.0d0$
+aright : y$ ntol:4$
+depends([p,f2,f3],t)$
+lvfs:[t,p,f2,f3]$
+list_of_eqns: [diff(p,t,2)= -0.5*(1/t+1/(t-1.0)+1/(t-y))*diff(p,t,1)+
+((v-f2-f3)/t+f2/(t-1.0)+f3/(t-y))*p , diff(f2,t,1)=0, diff(f3,t,1)=0]$
+list_of_conds:[(diff(p,t,1)-2.0*p*(v-f2-f3))(0)=0,
+(p -1.0)(1)=0, (diff(p,t,1)-2.0*p*f2)(1)=0, (diff(p,t,1)-2.0*p*f3)(y)=0]$
+list_of_guess:[2.0*t-1.0,1.0,1/(2.0*y-1.0)]$
+
+
+load("colnew_help.mac")$
+
+nsteps:100$
+eigenval: makelist([0.0,0.0,0.0],k,1,nsteps)$
+use_result():= (
+  xx:[0.2],
+  zval: colnew_appsln(xx, mstar, fspace, ispace)[1],
+  eigenval[ii][1]: zval[3],
+  eigenval[ii][2]: zval[4],
+  eigenval[ii][3]: zval[3]+y*zval[4])$
+
+list_of_params: makelist(0.00001d0+0.2*k,k,0,nsteps-1)$
+ii:1$
+for v in list_of_params do (run_colnew(), ii:ii+1)$
+
+vv: makelist(0.2*k,k,0,nsteps-1)$
+plot2d([[discrete,vv, makelist(eigenval[k][1],k,1,nsteps)],
+  [discrete,vv, makelist(eigenval[k][2],k,1,nsteps)],
+  [discrete,vv, makelist(eigenval[k][3],k,1,nsteps)]])$

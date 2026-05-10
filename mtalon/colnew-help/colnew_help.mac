@@ -1,0 +1,74 @@
+/* Helper for the use of colnew */
+
+load(colnew)$
+load("colnew_discov.lisp")$
+
+colnew_symbs: [aleft,aright,lvfs,list_of_eqns,ntol,list_of_conds,list_of_guess]$
+
+read_data(symb) ::= buildq([symb:symb], if (symb = 'symb) then
+  (print("Define ", symb, ".Terminate by ;"), symb: read(" ",symb,": "))
+  else symb)$
+
+colnew_symbs: [aleft,aright,lvfs,list_of_eqns,ntol,list_of_conds,list_of_guess]$
+for symb in colnew_symbs do (
+if     (symb = aleft) then aleft:float(read_data(aleft))
+elseif (symb = aright) then aright:float(read_data(aright))
+elseif (symb = lvfs) then (
+  print("Give the list of variable and functions in equations, like [x,F,G]"),
+    lvfs:read_data(lvfs),
+    depends(rest(lvfs),first(lvfs)))
+elseif (symb = list_of_eqns) then (
+  print("Define the list of the differential equations."),
+  list_of_eqns: read_data(list_of_eqns),
+  eqns_to_funs(list_of_eqns),
+  define(funmake(df,cons(var0,var_list)), jacobian(apply(f,cons(var0,var_list)),var_list)))
+elseif (symb = ntol) then (
+  ntol:read_data(ntol),
+  if (ntol < mstar) then print ("You need to edit ltol and tol")) 
+elseif (symb = list_of_conds) then (
+  print("Define the ", mstar, "boundary conditions."),
+  list_of_conds: read_data(list_of_conds),
+  conds_to_zconds(list_of_conds, aleft, aright, max_subst_list, m_list),
+  fixpnt: float(fixpnt),
+  ZETA:float(ZETA),
+  define(funmake(dg, var_list), jacobian(apply(g,var_list),var_list)))
+elseif (symb = list_of_guess) then (
+  list_of_guess: read_data(list_of_guess),
+  define(guess(var0), build_guess(list_of_guess,m_list,ncomp,var0))))$
+
+build_ipar(m_list, mstar, ncomp, nfixpnt,ntol)$
+fspace:makelist(0d0,k,1,ipar[5])$
+ispace:makelist(0,k,1,ipar[6])$
+
+print("ncomp = ", ncomp, ", m_list = ", m_list, ", mstar = ", mstar,
+  ", ntol = ", ntol);
+print("max_subst_list = ", max_subst_list);
+print("ZETA: ", ZETA);
+print("ipar: ", ipar);
+print("ltol: ", ltol);
+print("tol: ",tol);
+print("fixpnt: ",fixpnt);
+
+
+iflag:1$
+print("Please give floating numerical values to parameters.")$
+ipar[7]:1$   /* to suppress abundant colnew printout */
+break();
+ 
+  
+/* Assume param is free in f,g, etc but fixed in fsub,dfsub,etc. */
+
+run_colnew() := (
+define(funmake (fsub, cons(var0,var_list)), apply (f, cons(var0,var_list))),
+define(funmake (dfsub, cons(var0,var_list)), apply(df,cons(var0,var_list))), 
+define(funmake (gsub, cons(i,var_list)), buildq([gval:apply (g, var_list)], gval[i])),
+define(funmake (dgsub, cons(i,var_list)), buildq([dgval:apply(dg,var_list)], row(dgval,i)[1])),
+
+[iflag, fspace, ispace] : colnew_expert(ncomp, m_list, aleft, aright, ZETA,
+  ipar, ltol, tol, fixpnt, ispace, fspace, iflag, fsub, dfsub, gsub,
+  dgsub, guess),
+
+use_result(),  /*  must be defined in the main program */
+ipar[9]:3,     /* run continuation after first step */
+ipar[3]: ispace[1])$
+

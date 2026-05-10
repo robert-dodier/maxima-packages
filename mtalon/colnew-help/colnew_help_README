@@ -1,0 +1,130 @@
+Colnew
+
+Colnew is a program to solve a system of differential equations with
+boundary conditions by the collocation method. This means the interval
+on which the system is defined is subdivided in subintervals by a
+mesh.  On each subinterval one approximates the solution by
+splines. The differential equations are imposed on gaussian points
+inside the subintervals, while at their boundaries, on the mesh, one
+imposes continuity of the derivatives of lower order. This gives a big
+system of algebraic equations on the coefficients of the splines which
+is solved simply in the linear case and by Newton methods in the non
+linear case. From this one computes the z-vector at each point, that
+is the values of the mstar lower order derivatives obtained from the
+splines.  Eventually the mesh is refined until one is satisfied of the
+solution.
+
+Define the parameters which enter your equations, and the interval
+aleft, aright on which they are defined, except those you want to use
+for continuation, if necessary. In general most parameters must be
+defined as floating point values, the system enforces that for the
+basic ones. Failing to do that, you will see lisp errors. You will
+also see a lisp error before computing the mesh if you have forgotten
+to define aleft or aright or if you don't have aleft < aright.  Then
+issue a depends([<functions>],<var>) so that you can write the
+differential equations in the form: diff(u,x,n) = f(functions of lower
+order derivatives). Without the depends declaration all derivatives
+will vanish, and nothing works.
+
+list_of_eqns:
+Colnew only accepts systems where the higher order derivatives can be
+expressed explicitly. To be able to parse things simply, only use the
+notation diff(u,x,m) even for m=1, and not diff(u(x),x,m).  In general
+if the higher orders are n_i then the solution of the system depends
+on mstar=sum n_i constants. Put the equations in a list list_of_eqns.
+
+list_of_conds:
+To fix a solution one must provide precisely mstar conditions, either
+at the boundary or even inside the interval [aleft,aright]. Each
+condition must be of the form C(p)=0 where C is some function of the
+lower order derivatives and C must vanish at the point p. The points p
+form an ordered list ZETA of length mstar. Those which are interior to
+the interval are taken uniquely as elements of the ordered array
+fixpnt, to which one may add other interior points. The aim is that
+all points of fixpoint belong to the computation mesh, thus the
+differential equations is not checked on them, which allows in
+particular to avoid singularities. Put the conditions in the list
+list_of_conds. One may edit fxpoint later.
+
+The Example 4 is a case where the differential equation is singular at
+the 3 points aleft, aright, and the one interior point a_2 of
+fixpnt. The boundary conditions are imposed on these 3 points
+a_j. They are of the unusual type, with some constant k,
+(diff(p,t,1)-k*p)(a_j)=0 plus a normalization p(a_2)-1=0. These
+singularities do not preclude finding perfectly fine solutions obeying
+the boundary conditions.
+
+list_of_guess:
+In general the considered systems have several discrete solutions
+fulfilling both equations and boundary conditions. To select and
+converge on a particular one, it is necessary to provide a guess as
+starting point.  This is a list of functions of the variable
+corresponding to the underived functions of the system. For example
+give a guess for G(x) and H(x) in Example 3.  The system uses maxima
+to compute their appropriate derivatives. Put the guess of functions
+in the list list_of_guess. So this is a list of explicit functions of
+the variable.
+ 
+tolerances:
+At each step of the refinement on has a z-vector defined at each point
+of each subinterval.  One may chose to check only particular
+components, for example for [G,G',H,H',H''] giving [z1,z2,z3,z4,z5],
+if one wants to look only at G and H, that is z1 and z3, one defines
+ntol=2, ltol=[1,3]. One may also require values for the corresponding
+tolerances, for example tol=[1d-7,1d-7].  By default the system checks
+tolerances on all mstar components, with tolerance values
+1d-5. Otherwise one needs to set ntol to a smaller value at the
+beginning. The meaning of the tolerance eps is that, on each
+subinterval, one tries to get, for all checked zj that |zj -zj^0| <
+eps + eps*zj^0, where zj^0 is supposed to be the exact solution, of
+course estimated from the convergence of the refined approximations.
+
+ipar:
+After having parsed the equations and conditions the system outputs the
+many colnew variables that it has discovered, in particular the array
+ipar of 11 integers that controls colnew behavior. In most case one
+should not have to modify it, but one may consult the documentation of
+colnew_package if necessary. After that the system outputs a break
+which allows to perform modifications of ipar, ltol, tol, fixpnt if
+one so desires. For example for Example 3 one inserts ltol:[1,3]$
+tol:[1d-7,1d-7]$ at the prompt. One terminates the break by typing
+exit; at the prompt. One should check that all displayed values are
+reasonable and contain numerical data. If the problem is linear one should
+set ipar[1]:0 which simplifies the solution of the collocation problem.
+One could set ipar[7] to have more or less colnew verbosity. It may be
+necessary to increase ipar[2] and ipar[3] for numerically difficult problems,
+see the example osc2.mac.
+
+use_result:
+Define the function use_result() which does the most basic things with
+the result of colnew. Basically one calls colnew_appsln(xx, mstar,
+fspace, ispace) where xx is an array of points, perhaps just one,
+chosen as we like, and the result is the array of all zj values at
+these points, so the result is a 2-dim array. For example in Example 3
+xx is an array of 100 points covering the whole interval, and we are
+interested only on the first component of the z-vector (that is G),
+while in Example 4 xx is an array of just one point [0.2] and we are
+interested in just f2 and f4, that is the components 3 and 4 of the
+z-vector. Then store the chosen components somewhere. The function
+run_colnew() runs colnew, followed by use_result. Finally produce, for
+example, a plot from the stored results.
+
+
+continuation:
+In the simplest case all parameters are fixed to numerical values at
+the beginning. Then colnew will find the solution starting from the
+guess. In many interesting cases there are parameters that one can
+vary from computation to computation, the previous result serving as
+guess for the following one. To do that, after the first computation
+one has to set ipar[9]:3 ipar[3]:ispace[1]. The system will do it
+automatically. The function run_colnew executes in a context where the
+free parameters have been given numerical values, such as s,L in Example 3
+or v in Example 4, this ensures that the functions fsub, etc. are
+evaluated with these values of the parameters. One can check that by
+issuing:
+dispfun(fsub,dfsub,gsub,dgsub)
+after their definitions in colnew_help.mac. They should contain only
+numerical values besides the zj.  The examples Example 3 and Example 4
+show how to do the continuation. If some parameters are not evaluated as
+numerical values you will see lisp errors saying that some quantity is not
+a floating point value.
