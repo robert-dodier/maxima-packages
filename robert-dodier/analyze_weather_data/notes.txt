@@ -1,0 +1,39 @@
+Navigate to this link.
+
+    https://www.ncdc.noaa.gov/cdo-web/datatools/findstation
+
+(You can also try 
+
+    https://www.ncdc.noaa.gov/cdo-web/search
+
+I don't know what's the difference, although I did see at least one station show up on the search link that wasn't present on findstation. Afterwards, that station also showed up on findstation. Dunno what's going on there.)
+
+Then for "Select Dataset", choose "Daily Summaries".
+
+For "Select Date Range", choose a starting date in the distant past, otherwise stations with historic data will be excluded.
+
+For "Enter Location", enter a location; map will show stations in vicinity of that.
+
+For "Data Types", it appears you can leave it blank on the first page, and you can choose data types after proceeding to checkout.
+
+Click on a station to get a pop-up window, which has a button "ADD TO CART".
+
+You can select multiple stations.
+
+I see "Cart (Free Data)" at the upper right of the page. I clicked on that.
+
+Next page is "Cart: Daily Summaries". Select output format (I selected CSV) and date range. Looks like date range defaults to entire range available for the selected station or stations.
+
+Click on "Continue".
+
+Next page is "Custom Options: Daily Summaries". You can select some contextual data and select measured variables. I forget exactly what combination of flags I have typically been working with, although I think I selected "Geographic Location" and omitted "Include Data Flags". For variables, I think I was usually selecting "Precipitation", "Air Temperature", and "Wind".
+
+Click on "Continue".
+
+Next page is "Review Order".
+
+Enter your email address and click "SUBMIT ORDER". Link is sent via email.
+
+I've been getting 2 emails, one for order confirmation and one for order complete, which has the download link.
+
+Downloaded CSV files are named nnnnnnn.csv where nnnnnnn is the request number (currently somewhat greater than 4000000). The CSV contains data for all stations that were selected.
