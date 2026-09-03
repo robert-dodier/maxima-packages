@@ -1,0 +1,184 @@
+/* minq.mac -- Maxima implementation of function interface for Microsoft LINQ.
+ *
+ * copyright 2026 by Robert Dodier.
+ * I release this work under terms of the GNU General Public License, version 2.
+ */
+
+/* LINQ operations as listed on https://en.wikipedia.org/wiki/Language_Integrated_Query .
+ *
+ *   Select
+ *   Where
+ *   SelectMany
+ *   Sum, Min, Max, Average
+ *   Aggregate
+ *   Join, GroupJoin
+ *   Take, TakeWhile
+ *   Skip, SkipWhile
+ *   OfType
+ *   Concatenate
+ *   OrderBy, ThenBy
+ *   Reverse
+ *   GroupBy
+ *   Distinct
+ *   Union, Intersect, Except
+ *   SequenceEqual
+ *   First, FirstOrDefault, Last, LastOrDefault
+ *   Single, SingleOrDefault
+ *   ElementAt
+ *   Any, All
+ *   Contains
+ *   Count
+ *
+ *   Convert a collection into another type:
+ *     AsEnumerable
+ *     AsQueryable
+ *     ToArray
+ *     ToList
+ *     ToDictionary
+ *     ToLookup
+ *     Cast
+ *     OfType
+ */
+
+/* sequencing operator */
+
+infix ("|>", 100);
+
+declare ("|>", lassociative);
+
+infix ("-->");
+
+a --> b ::= buildq ([a, b], b: a);
+
+matchdeclare (ll, listp, aa, all);
+
+tellsimpafter (ll |> aa, aa (ll));
+
+matchdeclare (ff, lambda ([e], not atom (e) and op (e) = 'lambda));
+
+tellsimpafter (ff |> aa, buildq ([ff, aa], lambda ([l], aa (ff (l)))));
+
+matchdeclare (hh, arrayp);
+
+/* MAY WANT TO HANDLE MAXIMA ARRAYS AS WELL */
+arrayp (e) := ?hash\-table\-p (e);
+
+tellsimpafter (hh |> aa, maphash (aa, hh));
+
+maphash (f, h) :=
+    block ([h1: make_array (hashed, 1)], /* NO CLEAR WAY TO INSPECT NUMBER OF KEYS OF H */
+           for [k, v] in h do arraysetapply (h1, k, f (v)),
+           h1);
+
+/* LINQ functions */
+
+Select (f) := buildq ([f], lambda ([l], map (f, l)));
+
+Where (f) := buildq ([f], lambda ([l], sublist (l, f)));
+
+/* SelectMany */
+
+Sum () := lambda ([l], block ([x], lsum (x, x, l)));
+
+Min () := lambda ([l], lmin (l));
+
+Max () := lambda ([l], lmax (l));
+
+Average () := lambda ([l], if l # [] then Sum () (l) / length (l));
+
+/* Aggregate */
+
+/* Join, GroupJoin */
+
+Take (n) := buildq ([n], lambda ([l], firstn (l, n)));
+
+TakeWhile (f) :=
+    buildq ([f], lambda ([l], block ([m: [], x], while is (f (x: first (l))) = true do (push (x, m), l: rest (l)), reverse (m))));
+
+Skip (n) := buildq ([n], lambda ([l], rest (l, n)));
+
+SkipWhile (f) :=
+    buildq ([f], lambda ([l], while is (f (first (l))) = true do (l: rest (l)), l));
+
+/* OfType */
+
+Concatenate (m) := buildq ([m], lambda ([l], append (l, m)));
+
+/* f is a function of one argument, which produces a sorting key.
+ * Current implementation applies f every time a comparison is needed.
+ * A somewhat more efficient approach would be to map f over l,
+ * order the resulting list, and apply that ordering to l.
+ */
+
+OrderBy (f) := buildq ([f], lambda ([l], sort (l, lambda ([a, b], orderlessp (f (a), f (b))))));
+
+/* ThenBy */
+
+Reverse () := lambda ([l], reverse (l));
+
+GroupBy (f) :=
+    buildq ([f],
+            lambda ([l],
+                    block ([y: map (f, l), h: make_array (hashed, 1), P, y_ordered, l_ordered],
+                           P: ordering (y),
+                           y_ordered: permute (P, y),
+                           l_ordered: permute (P, l),
+                           for y1 in unique (y)
+                                do h [y1]: makelist (l_ordered[i], i, first_index (y_ordered, y1), last_index (y_ordered, y1)),
+                           h)));
+
+first_index (l, x) :=
+    if l # [] and not ordergreatp (first (l), x) and not ordergreatp (x, last (l))
+        then first_index_1 (l, x, 1, length (l));
+
+first_index_1 (l, x, i_0, i_1) :=
+    if i_1 = i_0 then i_0
+    elseif i_1 - i_0 = 1 then (if x = l[i_0] then i_0 else i_1)
+        else block ([i: i_0 + floor ((i_1 - i_0)/2)],
+                    if not ordergreatp (x, l[i])
+                        then first_index_1 (l, x, i_0, i)
+                        else first_index_1 (l, x, i, i_1));
+
+last_index (l, x) :=
+    if l # [] and not ordergreatp (first (l), x) and not ordergreatp (x, last (l))
+        then last_index_1 (l, x, 1, length (l));
+
+last_index_1 (l, x, i_0, i_1) :=
+    if i_1 = i_0 then i_0
+        elseif i_1 - i_0 = 1 then (if x = l[i_1] then i_1 else i_0)
+        else block ([i: i_0 + floor ((i_1 - i_0)/2)],
+                    if not orderlessp (x, l[i])
+                        then last_index_1 (l, x, i, i_1)
+                        else last_index_1 (l, x, i_0, i));
+
+Distinct () := lambda ([l], unique (l));
+
+Union (m) := buildq ([m], lambda ([l], listify (union (setify (l), setify (m)))));
+
+Intersect (m) := buildq ([m], lambda ([l], listify (intersection (setify (l), setify (m)))));
+
+Except (m) := buildq ([m], lambda ([l], listify (setdifference (setify (l), setify (m)))));
+
+/* SequenceEqual */
+
+First () := lambda ([l], first (l));
+
+FirstOrDefault (x) := buildq ([x], lambda ([l], if l = [] then x else first (l)));
+
+Last () := lambda ([l], last (l));
+
+LastOrDefault (x) := buildq ([x], lambda ([l], if l = [] then x else last (l)));
+
+/* Single */
+
+/* SingleOrDefault */
+
+ElementAt (n) := buildq ([n], lambda ([l], l [n]));
+
+Any (f) := buildq ([f], lambda ([l], some (f, l)));
+
+All (f) := buildq ([f], lambda ([l], every (f, l)));
+
+Contains (x) := buildq ([x], lambda ([l], member (x, l)));
+
+Count () := lambda ([l], length (l));
