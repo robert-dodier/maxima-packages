@@ -1,26 +1,53 @@
-data_frame_from_file (input) :=
-    block ([ data, columns_names, data_by_columns, stations, names, dates, stations_runs,
-             maybe_parse, measured_data_by_columns, measured_data_by_columns_parsed ],
+/* For now, forgo parsing dates since parsed dates aren't any easier to work with,
+ * given that dates are big-endian yyyy-mm-dd.
+ * I wonder about a scheme in which parsing functions can be specified per column.
+ */
+
+data_frame_from_file (input, [columns_specification]) :=
+    block ([ data, columns_names, ii, nonnumeric_columns_names, numeric_columns_names,
+             nonnumeric_columns_ii, numeric_columns_ii, numeric_columns, nonnumeric_columns,
+             maybe_parse, numeric_columns_parsed, all_columns, all_ii,
+             column_index_and_column, data_reassembled_by_columns ],
 
            data: read_matrix (input),
 
            columns_names: data[1],
+           ii: makelist (i, i, 1, length (columns_names)),
 
-           if firstn (columns_names, 3) # [ "STATION", "NAME", "DATE" ]
-               then error ("data_frame_from_file: expected first three columns are STATION, NAME, and DATE."),
-
-           data_by_columns: args (transpose (rest (data))),
-           [stations, names, dates]: [ data_by_columns[1], data_by_columns[2], data_by_columns[3] ],
-           measured_data_by_columns: rest (data_by_columns, 3),
+           nonnumeric_columns_names:
+               if columns_specification # [] and assoc ('nonnumeric_columns, columns_specification) # false
+                   /* Silently omit any which are not present in columns_names. */
+                   then sublist (assoc ('nonnumeric_columns, columns_specification), lambda ([x], member (x, columns_names)))
+                   /* Assume no columns are nonnumeric if not specifically known to be nonnumeric. */
+                   else [],
+           
+           numeric_columns_names:
+               if columns_specification # [] and assoc ('numeric_columns, columns_specification) # false
+                   /* Silently omit any which are not present in columns_names. */
+                   then sublist (assoc ('numeric_columns, columns_specification), lambda ([x], member (x, columns_names)))
+                   /* Assume any column is numeric if not specifically known to be nonnumeric. */
+                   else sublist (columns_names, lambda ([x], not member (x, nonnumeric_columns_names))),
+           
+           nonnumeric_columns_ii: sublist_indices (columns_names, lambda ([x], member (x, nonnumeric_columns_names))),
+           numeric_columns_ii: sublist_indices (columns_names, lambda ([x], member (x, numeric_columns_names))),
+           numeric_columns: submatrix_columns (rest (data), numeric_columns_ii),
+           nonnumeric_columns: submatrix_columns (rest (data), nonnumeric_columns_ii),
 
            maybe_parse: lambda ([x], if stringp (x) then parse_string (x) else x),
-           measured_data_by_columns_parsed: makelist (map (maybe_parse, X), X, measured_data_by_columns),
+           numeric_columns_parsed: map (lambda ([l], map (maybe_parse, l)), numeric_columns),
 
-           /* Forgo parsing dates since parsed dates aren't any easier to work with,
-            * given that dates are big-endian yyyy-mm-dd.
-            */
+           /* Reassemble the data matrix comprising numeric and nonnumeric columns in the original order. */
 
-           make_data_frame (columns_names, append ([stations, names, dates], measured_data_by_columns_parsed)));
+           all_columns: append (nonnumeric_columns, numeric_columns_parsed),
+           all_ii: append (nonnumeric_columns_ii, numeric_columns_ii),
+           column_index_and_column: makelist ([ all_ii[j], all_columns[j] ], j, 1, length (all_ii)),
+           data_reassembled_by_columns: map (second, sort (column_index_and_column)),
+
+           make_data_frame (columns_names, data_reassembled_by_columns));
+
+submatrix_columns (X, ii) :=
+    block ([X_transpose: transpose (X)],
+           makelist (X_transpose [i], i, ii));
 
 defstruct (data_frame (names, data));
 
