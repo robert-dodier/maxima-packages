@@ -61,6 +61,8 @@ make_data_frame (columns_names, columns_data) :=
 
 defstruct (nested_data_frame (names, data));
 
+nested_data_frame_p (e) := not atom(e) and op(e) = 'nested_data_frame;
+
 /* consider adjusting binding power so "by" has higher precedence than "group" */
 prefix ("group");
 infix ("by");
@@ -112,10 +114,11 @@ aggregate (e) :=
                                   */
                                  else block ([data1: sublist (bb@data[aa], lambda ([a], a # false))],
                                              ff (data1))
-                        else block ([h: make_array (hashed)],
-                                    for [k, v] in bb
+                    elseif nested_data_frame_p (bb)
+                        then block ([h: apply (make_array, cons (hashed, makelist (1, length (bb@names))))],
+                                    for [k, v] in bb@data
                                         do arraysetapply (h, k, aggregate (aa of v by ff)),
-                                    h));
+                                    nested_data_frame (bb@names, h)));
 
 matchdeclare ([names, data], all);
 
