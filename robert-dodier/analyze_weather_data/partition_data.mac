@@ -102,23 +102,34 @@ infix ("of");
 
 matchdeclare ([aa, bb, ff], all);
 defmatch (m1, (aa of bb) by ff);
+defmatch (m2, bb by ff);
 
 aggregate (e) :=
     block ([aa, bb, ff],
            if m1 (e) # false
-               then if data_frame_p (bb)
-                        then if listp (aa)
-                                 then map (lambda ([aa1], aggregate (aa1 of bb by ff)), aa)
-                                 /* filter out missing values before calling function;
-                                  * probably need to allow for other ways to handle them
-                                  */
-                                 else block ([data1: sublist (bb@data[aa], lambda ([a], a # false))],
-                                             ff (data1))
-                    elseif nested_data_frame_p (bb)
-                        then block ([h: apply (make_array, cons (hashed, makelist (1, length (bb@names))))],
-                                    for [k, v] in bb@data
-                                        do arraysetapply (h, k, aggregate (aa of v by ff)),
-                                    nested_data_frame (bb@names, h)));
+               then aggregate1 (aa, bb, ff)
+           elseif m2 (e) # false
+               then aggregate1 (false, bb, ff));
+
+aggregate1 (aa, bb, ff) :=
+    if data_frame_p (bb)
+        then block ([h: apply (make_array, cons (hashed, makelist (1, length (bb@names)))), fdata],
+                    /* filter out missing values before calling function;
+                     * probably need to allow for other ways to handle them
+                     *
+                     * Also, bit of "do what I mean" going on here:
+                     * if aa isn't already a list, make it a list of one element.
+                     * Likewise, if result of ff isn't a list, make it a list of one element.
+                     */
+                    aa: if aa = false then bb@names else (if listp (aa) then aa else [aa]),
+                    fdata: makelist (ff (sublist (bb@data[aa1], lambda ([a], a # false))), aa1, aa),
+                    for i thru length (aa) do h[aa[i]]: if listp (fdata[i]) then fdata[i] else [ fdata[i] ],
+                    data_frame (aa, h))
+    elseif nested_data_frame_p (bb)
+        then block ([h: apply (make_array, cons (hashed, makelist (1, length (bb@names))))],
+                    for [k, v] in bb@data
+                        do arraysetapply (h, k, aggregate1 (aa, v, ff)),
+                    nested_data_frame (bb@names, h));
 
 matchdeclare ([names, data], all);
 
@@ -132,4 +143,9 @@ defrule (equation_list_from_nested_data_frame_1,
                 sort (e)));
          
 equation_list_from_data_frame (df) :=
-    apply2 (df, equation_list_from_data_frame_1, equation_list_from_nested_data_frame_1);
+    apply1 (df, equation_list_from_nested_data_frame_1, equation_list_from_data_frame_1);
+
+defrule (matrix_from_data_frame_1, data_frame (names, data), cons (names, transpose (apply (matrix, makelist (data[x], x, names)))));
+
+matrix_from_data_frame (df) :=
+    apply1 (df, equation_list_from_nested_data_frame_1, matrix_from_data_frame_1);
