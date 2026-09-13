@@ -129,7 +129,10 @@ aggregate1 (aa, bb, ff) :=
         then block ([h: apply (make_array, cons (hashed, makelist (1, length (bb@names))))],
                     for [k, v] in bb@data
                         do arraysetapply (h, k, aggregate1 (aa, v, ff)),
-                    nested_data_frame (bb@names, h));
+                    nested_data_frame (bb@names, h))
+    elseif aa = false
+        then ff (bb) /* hmm, I wonder if we should attempt to filter bb here */
+        else error ("aggregate1: not sure what to do; first argument is present and second argument is not a data frame.");
 
 matchdeclare ([names, data], all);
 
@@ -145,7 +148,41 @@ defrule (equation_list_from_nested_data_frame_1,
 equation_list_from_data_frame (df) :=
     apply1 (df, equation_list_from_nested_data_frame_1, equation_list_from_data_frame_1);
 
+matchdeclare (hh, ?hash\-table\-p);
+
+defrule (assoc_tables_from_hash_tables_1,
+         /* this next about checking if x is a list is a workaround for inconsistent behavior of arrayinfo ... sigh. */
+         hh, apply ('assoc_table, makelist (x = if not listp (x) then hh[x] else arrayapply (hh, x), x, sort (rest (arrayinfo (hh), 2)))));
+
+assoc_tables_from_hash_tables (df) :=
+    apply1 (df, assoc_tables_from_hash_tables_1);
+
 defrule (matrix_from_data_frame_1, data_frame (names, data), cons (names, transpose (apply (matrix, makelist (data[x], x, names)))));
 
 matrix_from_data_frame (df) :=
-    apply1 (df, equation_list_from_nested_data_frame_1, matrix_from_data_frame_1);
+    applyb1 (apply1 (df, equation_list_from_nested_data_frame_1), matrix_from_data_frame_1);
+
+unnest_nested_data_frame (e) :=
+    applyb1 (assoc_tables_from_hash_tables (e), unnest_nested_data_frame_1);
+
+defrule (unnest_nested_data_frame_1,
+         nested_data_frame (names, data),
+         /* Duplicate the key values to match the number of rows of the corresponding data frame,
+          * paste they key values onto the matrix representation of the data frame,
+          * and concatenate the pasted-together matrices for each key-value pair.
+          */
+         block ([keys_order, keys_unordered, keys_ordered, values_unordered, values_ordered, nested_names, nesting_columns],
+                keys_unordered: maplist (lhs, data),
+                keys_order: ordering (keys_unordered),
+                keys_ordered: permute (keys_order, keys_unordered),
+                values_unordered: maplist (rhs, data),
+                values_ordered: permute (keys_order, values_unordered),
+                if length (unique (map (first, values_ordered))) > 1 then error ("some nested data frame has different names"),
+                nested_names: first (first (values_ordered)),
+                map (lambda ([key, value], makelist (key, length (rhs (first (value@data))))), keys_ordered, values_ordered),
+                reshape (%%, [2, any], 'by_columns),
+                nesting_columns: map (lambda ([x, v], x = v), names, %%),
+                makelist (makelist (assoc (x, v@data), v, values_ordered), x, nested_names),
+                reshape (%%, [3, any], 'by_rows),
+                map (lambda ([x, v], x = v), nested_names, %%),
+                data_frame (append (names, nested_names), apply (assoc_table, append (nesting_columns, %%)))));
