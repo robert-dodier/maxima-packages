@@ -99,7 +99,7 @@ make_hash_table (n) :=
 push ("../**/*.mac", file_search_maxima);
 push ("../**/*.lisp", file_search_lisp);
 
-load ("reshape");
+if ?mget ('reshape, '?mexpr) = false then load ("reshape");
 
 infix ("of");
 
