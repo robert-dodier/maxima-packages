@@ -78,11 +78,7 @@ group_data_frame_by (df, aa) :=
     if not every (lambda ([x], member (x, df@names)), aa)
         then error ("group: not every element of", aa, "is in the list of names", df@names)
         else block ([h, uu, names_sans_aa, aa_values],
-                    /* work around incoherent behavior of make_array:
-                     * need to supply number of 1's equal to the number of keys
-                     * e.g. make_array(hashed, 1, 1) for two keys.
-                     */
-                    h: apply (make_array, cons (hashed, makelist (1, length (aa)))),
+                    h: make_hash_table (length (aa)),
                     uu: unique (reshape (makelist (df@data[a], a, aa), [any, length (aa)], by_columns)),
                     names_sans_aa: df@names,
                     for a in aa do names_sans_aa: delete (a, names_sans_aa),
@@ -92,6 +88,13 @@ group_data_frame_by (df, aa) :=
                                   ll: makelist (makelist (df@data[x][i], i, ii), x, names_sans_aa),
                                   arraysetapply (h, u, make_data_frame (names_sans_aa, ll))),
                     nested_data_frame (aa, h));
+
+make_hash_table (n) :=
+    /* work around incoherent behavior of make_array:
+     * need to supply number of 1's equal to the number of keys
+     * e.g. make_array(hashed, 1, 1) for two keys.
+     */
+    apply (make_array, cons (hashed, makelist (1, n)));
 
 push ("../**/*.mac", file_search_maxima);
 push ("../**/*.lisp", file_search_lisp);
@@ -113,7 +116,7 @@ aggregate (e) :=
 
 aggregate1 (aa, bb, ff) :=
     if data_frame_p (bb)
-        then block ([h: apply (make_array, cons (hashed, makelist (1, length (bb@names)))), fdata],
+        then block ([h: make_hash_table (1), fdata],
                     /* filter out missing values before calling function;
                      * probably need to allow for other ways to handle them
                      *
@@ -126,7 +129,7 @@ aggregate1 (aa, bb, ff) :=
                     for i thru length (aa) do h[aa[i]]: if listp (fdata[i]) then fdata[i] else [ fdata[i] ],
                     data_frame (aa, h))
     elseif nested_data_frame_p (bb)
-        then block ([h: apply (make_array, cons (hashed, makelist (1, length (bb@names))))],
+        then block ([h: make_hash_table (length (bb@names))],
                     for [k, v] in bb@data
                         do arraysetapply (h, k, aggregate1 (aa, v, ff)),
                     nested_data_frame (bb@names, h))
@@ -163,7 +166,9 @@ matrix_from_data_frame (df) :=
     applyb1 (apply1 (df, equation_list_from_nested_data_frame_1), matrix_from_data_frame_1);
 
 unnest_nested_data_frame (e) :=
-    applyb1 (assoc_tables_from_hash_tables (e), unnest_nested_data_frame_1);
+   (applyb1 (assoc_tables_from_hash_tables (e), unnest_nested_data_frame_1),
+    hash_tables_from_assoc_tables (%%),
+    matrix_from_data_frame (%%));
 
 defrule (unnest_nested_data_frame_1,
          nested_data_frame (names, data),
@@ -180,9 +185,19 @@ defrule (unnest_nested_data_frame_1,
                 if length (unique (map (first, values_ordered))) > 1 then error ("some nested data frame has different names"),
                 nested_names: first (first (values_ordered)),
                 map (lambda ([key, value], makelist (key, length (rhs (first (value@data))))), keys_ordered, values_ordered),
-                reshape (%%, [2, any], 'by_columns),
+                reshape (%%, [length (names), any], 'by_columns),
                 nesting_columns: map (lambda ([x, v], x = v), names, %%),
                 makelist (makelist (assoc (x, v@data), v, values_ordered), x, nested_names),
-                reshape (%%, [3, any], 'by_rows),
+                reshape (%%, [length (nested_names), any], 'by_rows),
                 map (lambda ([x, v], x = v), nested_names, %%),
                 data_frame (append (names, nested_names), apply (assoc_table, append (nesting_columns, %%)))));
+
+matchdeclare (aa, lambda ([e], not atom (e) and op (e) = 'assoc_table));
+
+hash_tables_from_assoc_tables (e) :=
+    applyb1 (e, hash_tables_from_assoc_tables_1);
+
+defrule (hash_tables_from_assoc_tables_1,
+         aa, block ([hh: make_hash_table (1)],
+                    for aa1 in aa do hh[lhs (aa1)]: rhs (aa1),
+                    hh));
