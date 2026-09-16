@@ -5,8 +5,8 @@
   (let ((timestamp (local-time:parse-timestring s)))
     (local-time:timestamp-to-universal timestamp)))
 
-(defmfun $timedate (u)
-  (let ((timestamp (local-time:universal-to-timestamp u)))
+(defmfun $timedate (&optional u)
+  (let ((timestamp (if (null u) (local-time:now) (local-time:universal-to-timestamp u))))
     (local-time:format-timestring nil timestamp)))
 
 (defmfun $decode_time (u)
