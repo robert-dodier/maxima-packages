@@ -125,7 +125,7 @@ aggregate1 (aa, bb, ff) :=
                      * Likewise, if result of ff isn't a list, make it a list of one element.
                      */
                     aa: if aa = false then bb@names else (if listp (aa) then aa else [aa]),
-                    fdata: makelist (ff (sublist (bb@data[aa1], lambda ([a], a # false))), aa1, aa),
+                    fdata: makelist (ff (bb@data[aa1]), aa1, aa),
                     for i thru length (aa) do h[aa[i]]: if listp (fdata[i]) then fdata[i] else [ fdata[i] ],
                     data_frame (aa, h))
     elseif nested_data_frame_p (bb)
