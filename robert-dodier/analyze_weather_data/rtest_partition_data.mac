@@ -95,13 +95,13 @@
 df1_matrix: matrix_from_data_frame (df1);
 ''(transpose (matrix (cons ("aa", aa), cons ("bb", bb), cons ("cc", cc), cons ("dd", dd))));
 
-unnest_nested_data_frame (df1_by_aa);
+matrix_from_data_frame (unnest_nested_data_frame (df1_by_aa));
 ''(apply (matrix, cons (first (df1_matrix), sort (rest (args (df1_matrix)), lambda ([a, b], a[1] < b[1])))));
 
-unnest_nested_data_frame (df1_by_aa_bb);
+matrix_from_data_frame (unnest_nested_data_frame (df1_by_aa_bb));
 ''(apply (matrix, cons (first (df1_matrix), sort (rest (args (df1_matrix)), lambda ([a, b], orderlessp (firstn (a, 2), firstn (b, 2)))))));
 
-unnest_nested_data_frame (df1_by_aa_mean);
+matrix_from_data_frame (unnest_nested_data_frame (df1_by_aa_mean));
 ''(matrix (["aa", "bb", "cc", "dd"],
            [ 0, mymean ([1,0,0,1,0,0,1,1,1,1,2,2,0,2,0,1,0,0,1,1,0,0,1]),
                 mymean ([3,6,15,3,5,12,10,18,0,12,19,17,9,3,4,1,9,6,7,9,19,8,15]),
@@ -110,7 +110,7 @@ unnest_nested_data_frame (df1_by_aa_mean);
                 mymean ([13,13,16,16,10,10,7,15,19,19,10,11,9,12,8,9,18,18,16,11,17,12,15,0,19,14,16]),
                 mymean ([55,49,92,0,26,16,13,40,71,9,20,45,57,85,19,74,98,90,48,10,38,79,71,40,94,49,33]) ]));
 
-unnest_nested_data_frame (df1_by_aa_bb_mean);
+matrix_from_data_frame (unnest_nested_data_frame (df1_by_aa_bb_mean));
 ''(matrix (["aa", "bb", "cc", "dd"],
            [ 0, 0, mymean ([6,15,5,12,9,4,9,6,19,8]), mymean ([81,82,29,24,8,63,88,44,10,51]) ],
            [ 0, 1, mymean ([3,3,10,18,0,12,1,7,9,15]), mymean ([12,75,54,76,64,96,74,89,26,86]) ],

@@ -164,8 +164,7 @@ matrix_from_data_frame (df) :=
 
 unnest_nested_data_frame (e) :=
    (applyb1 (assoc_tables_from_hash_tables (e), unnest_nested_data_frame_1),
-    hash_tables_from_assoc_tables (%%),
-    matrix_from_data_frame (%%));
+    hash_tables_from_assoc_tables (%%));
 
 defrule (unnest_nested_data_frame_1,
          nested_data_frame (names, data),
