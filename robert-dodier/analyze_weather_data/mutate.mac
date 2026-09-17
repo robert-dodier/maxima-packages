@@ -35,10 +35,15 @@ mutate1 (aa, bb, ff, e1) :=
                                                  then [xx, xx, gg]
                                                  else error ("mutate1: not sure what to do with", f),
                                   if not listp (y) then y: [y],
-                                  h[x]: apply (g, map (lambda ([y1], bb@data[y1]), y))),
+                                  h[x]: apply (g, map (lambda ([y1], bb@data[y1]), y)),
+                                  if not member (x, aa) then push (x, aa)),
                     data_frame (aa, h))
     elseif nested_data_frame_p (bb)
         then block ([h: make_hash_table (length (bb@names))],
                     for [k, v] in bb@data
                         do arraysetapply (h, k, mutate1 (aa, v, ff, e1)),
                     nested_data_frame (bb@names, h));
+
+coverage (df) := aggregate (df by coverage1);
+
+coverage1 (l) := if l # [] then lsum (if x # false then 1 else 0, x, l) / length (l);
