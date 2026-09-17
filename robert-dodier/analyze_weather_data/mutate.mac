@@ -1,0 +1,44 @@
+matchdeclare ([aa, bb, ff], all);
+defmatch (mutate_m1, (aa of bb) by ff);
+defmatch (mutate_m2, bb by ff);
+defmatch (mutate_m3, aa of bb);
+
+mutate (e, [e1]) :=
+    block ([aa, bb, ff],
+           e1: if e1 # [] then e1[1],
+           if mutate_m1 (e) # false
+               then mutate1 (aa, bb, ff, e1)
+           elseif mutate_m2 (e) # false
+               then mutate1 (false, bb, ff, e1)
+           elseif mutate_m3 (e) # false
+               then mutate1 (aa, bb, [], e1));
+
+matchdeclare ([xx, yy, gg], all);
+defmatch (mutate_m4, xx = gg of yy);
+defmatch (mutate_m5, xx = gg);
+
+mutate1 (aa, bb, ff, e1) :=
+    if data_frame_p (bb)
+        then block ([h: make_hash_table (1), fdata],
+                    aa: if aa = false then bb@names else (if listp (aa) then aa else [aa]),
+                        /* Keep existing columns verbatim, and create new columns.
+                         * This would be specified by some configuration of e1, analogous to the .keep argument of dplyr mutate;
+                         * just ignore it for now.
+                         */
+                    for a in aa do h[a]: bb@data[a],
+                    if not listp (ff) then ff: [ff],
+                    for f in ff
+                        do block ([xx, yy, gg, x, y, g],
+                                  [x, y, g]: if mutate_m4 (f) # false
+                                                 then [xx, yy, gg]
+                                             elseif mutate_m5 (f) # false
+                                                 then [xx, xx, gg]
+                                                 else error ("mutate1: not sure what to do with", f),
+                                  if not listp (y) then y: [y],
+                                  h[x]: apply (g, map (lambda ([y1], bb@data[y1]), y))),
+                    data_frame (aa, h))
+    elseif nested_data_frame_p (bb)
+        then block ([h: make_hash_table (length (bb@names))],
+                    for [k, v] in bb@data
+                        do arraysetapply (h, k, mutate1 (aa, v, ff, e1)),
+                    nested_data_frame (bb@names, h));

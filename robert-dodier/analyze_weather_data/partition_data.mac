@@ -104,23 +104,20 @@ if ?mget ('reshape, '?mexpr) = false then load ("reshape");
 infix ("of");
 
 matchdeclare ([aa, bb, ff], all);
-defmatch (m1, (aa of bb) by ff);
-defmatch (m2, bb by ff);
+defmatch (partition_data_m1, (aa of bb) by ff);
+defmatch (partition_data_m2, bb by ff);
 
 aggregate (e) :=
     block ([aa, bb, ff],
-           if m1 (e) # false
+           if partition_data_m1 (e) # false
                then aggregate1 (aa, bb, ff)
-           elseif m2 (e) # false
+           elseif partition_data_m2 (e) # false
                then aggregate1 (false, bb, ff));
 
 aggregate1 (aa, bb, ff) :=
     if data_frame_p (bb)
         then block ([h: make_hash_table (1), fdata],
-                    /* filter out missing values before calling function;
-                     * probably need to allow for other ways to handle them
-                     *
-                     * Also, bit of "do what I mean" going on here:
+                    /* Bit of "do what I mean" going on here:
                      * if aa isn't already a list, make it a list of one element.
                      * Likewise, if result of ff isn't a list, make it a list of one element.
                      */
@@ -134,7 +131,7 @@ aggregate1 (aa, bb, ff) :=
                         do arraysetapply (h, k, aggregate1 (aa, v, ff)),
                     nested_data_frame (bb@names, h))
     elseif aa = false
-        then ff (bb) /* hmm, I wonder if we should attempt to filter bb here */
+        then ff (bb)
         else error ("aggregate1: not sure what to do; first argument is present and second argument is not a data frame.");
 
 matchdeclare ([names, data], all);
