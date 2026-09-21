@@ -3,82 +3,100 @@ load ("operatingsystem");
 if (input: getenv ("INPUT")) = false
     then error ("analyze_weather_data.mac: environment variable INPUT not specified, with no default.");
 
-data: read_matrix (input) $
+load ("partition_data");
+load ("mutate");
 
-columns: map (parse_string, data[1]);
+data: read_data_frame_from_file (input, nonnumeric_columns = [ "STATION", "NAME", "DATE" ]);
 
-columns :: args (transpose (rest (data))) $
-
-/* Maxima timedate doodads are Common Lisp universal times,
- * which cannot be before 1900; a frankly ridiculous limitation.
- * Load the local-time library and redefine parse_timedate to compensate.
- * Would be a good idea to consider moving this into Maxima proper.
+/* Analyses:
+ *
+ * 1. Coverage
+ *   1a. Compute coverage year by year for each column, and look for runs of 90% or greater.
+ *   1b. Find the intersection of columns which have 90%+ coverage for all stations
+ *       (not necessarily in the same years).
+ *
+ * 2. Temperature
+ *   2a. Average max and average min by multi-year periods.
+ *       1 year periods, 10 year periods including 2020, 30 year periods including 2010, 100 year periods including 2000.
+ *   2b. Exceedance for max and min temperature
+ *       min > 70 F, for 1, 10, 30, and 100 year periods, as above, reported as number of days per year.
+ *       max > 90 F, for 1, 10, 30, and 100 year periods, as above, reported as number of days per year.
+ *   2c. Distribution of temperature difference between max and min.
+ *       (max - min) > 20 F, 30 F, or 40 F for 1, 10, 30, and 100 year periods, as above, reported as number of days per year.
+ *
+ * 3. Precipitation
+ *   3a. Total precipitation for for 1, 10, 30, and 100 year periods, as above.
+ *   3b. Exceedance for precipitation
+ *       precipitation > 0 inch for 1, 10, 30, and 100 year periods, as above, reported as number of days per year.
+ *       precipitation > 1 inch for 1, 10, 30, and 100 year periods, as above, reported as number of days per year.
  */
 
-load ("timedate-from-local-time.lisp");
+coverage_analysis_1 (df) :=
+    block ([coverage, meets_threshold, meets_threshold_unnested, meets_threshold_runs,
+            meets_threshold_places_values_lengths, meets_threshold_runs_long_enough],
+           coverage_by_years: aggregate (group (df by "DATE_year") by coverage),
+           meets_threshold: aggregate (coverage_by_years by lambda ([x], map (lambda ([y], is (y >= 0.9)), x))),
+           meets_threshold_unnested: unnest_nested_data_frame (%%),
+           meets_threshold_runs: aggregate (%% by find_runs),
+           meets_threshold_places_values_lengths: aggregate (%% by reconstruct_places_values_and_lengths),
+           meets_threshold_runs_long_enough: aggregate (%% by ensure_value_and_length[true, 10]));
 
-DATE_timedate: map (parse_timedate, DATE);
+coverage (l) := if l # [] then float (length (sublist (l, lambda ([x], x # false))) / length (l));
 
-AWND_numeric: map (lambda ([x], if stringp (x) then parse_string (x) else x), AWND);
-PRCP_numeric: map (lambda ([x], if stringp (x) then parse_string (x) else x), PRCP);
-SNOW_numeric: map (lambda ([x], if stringp (x) then parse_string (x) else x), SNOW);
-TMAX_numeric: map (lambda ([x], if stringp (x) then parse_string (x) else x), TMAX);
-TMIN_numeric: map (lambda ([x], if stringp (x) then parse_string (x) else x), TMIN);
+/* rr is a list of runs structs (at least one), as returned by find_runs.
+ * Reconstruct the places at which runs start and return [place, length] pairs,
+ * ignoring values.
+ */
 
-unique_stations: unique (STATION);
+reconstruct_places_values_and_lengths (rr) := map (reconstruct_places_values_and_lengths_1, rr);
 
-for i thru length (STATION) do names_by_station[STATION[i]]: NAME[i];
+reconstruct_places_values_and_lengths_1 (r) :=
+   (accumulate ("+", r@lengths, 1),
+    by_threes (rest (%%, -1), r@values, r@lengths));
 
-for u in unique_stations do printf (true, "~s --> ~s~%", u, names_by_station[u]);
+by_threes (a, b, c) := map (lambda ([a1, b1, c1], [a1, b1, c1]), a, b, c);
 
-push ("/home/dodier/github/github-forks/maxima-packages/robert-dodier/**/*.mac", file_search_maxima);
-push ("/home/dodier/github/github-forks/maxima-packages/robert-dodier/**/*.lisp", file_search_lisp);
+ensure_value_and_length [v, n] :=
+    buildq ([v, n], lambda ([ll], map (lambda ([l], ensure_value_and_length_1 (v, n, l)), ll)));
 
-load ("json_tools");
+ensure_value_and_length_1 (v, n, l) :=
+    sublist (l, lambda ([abc], abc[2] = v and abc[3] >= n));
+    
+/* find_runs is already over in descriptive.mac, don't try to get this working.
+ * sigh. i knew it sounded familiar, i just didn't remember where i put it.
+ *
+find_runs[n] :=
+    buildq ([n], 
+        lambda ([l],
+                block ([changed, run_lengths, ii],
+                        changed: map (is, map ("#", rest (l, -1), rest (l))),
+                        ii: append ([1], 1 + sublist_indices (changed, identity), [length (l) + 1]),
+                        run_lengths: rest (ii) - rest (ii, -1),
+                        sublist (by_twos (rest (ii, -1), run_lengths), lambda ([i_m], second (i_m) >= n)))));
 
-defstruct (station_data (DATE, AWND, PRCP, SNOW, TMAX, TMIN));
+/* copied verbatim from plottable_steps.mac; maybe this should be generally available */
 
-for u in unique_stations
-    do block ([ii: sublist_indices (STATION, lambda ([x], x = u)),
-               d: new (station_data)],
-              d@DATE: makelist (DATE_timedate[i], i, ii),
-              d@AWND: makelist (AWND_numeric[i], i, ii),
-              d@PRCP: makelist (PRCP_numeric[i], i, ii),
-              d@SNOW: makelist (SNOW_numeric[i], i, ii),
-              d@TMAX: makelist (TMAX_numeric[i], i, ii),
-              d@TMIN: makelist (TMIN_numeric[i], i, ii),
-              data_by_station[u]: d);
+by_twos (a, b) :=
+    if length (b) # length (a)
+        then error ("by_twos: arguments not the same length.")
+        else map (lambda ([a1, b1], [a1, b1]), a, b);
 
-winter_year (t) :=
-    block ([t_decoded: decode_time (t)],
-           if t_decoded[6] >= 7 then t_decoded[7] else t_decoded[7] - 1);
+test_find_runs (n, ll) :=
+    block ([l, y],
+           verify_well_formed_runs (ll),
+           l: construct_from_run_lengths (map (second, ll), [0, 1]),
+           (y: find_runs[n](l)) = ll or error ("test_find_runs: given n =", n, "and ll =", ll, ", find_runs returned", y));
 
-group_by_winter_years (S) :=
-    block ([w: map (winter_year, data_by_station[S]@DATE), u],
-           u: unique (w),
-           makelist (y1 = sublist_indices (w, lambda ([x], x = y1)), y1, u));
+verify_well_formed_runs (ll) :=
+    (ll = []
+        or ll[1][1] = 1
+               and every (lambda ([x], x >= 1), map (first, ll))
+               and every (lambda ([x], x >= 1), map (second, ll))
+               and every (lambda ([i], ll[i + 1][1] = ll[i][1] + ll[i][2]), makelist (i, i, 1, length (ll) - 1)))
+    or error ("verify_well_formed_runs:", ll, "is not a well-formed runs list.");
 
-tmin_by_winter_years (S) :=
-    block ([ii: group_by_winter_years (S), u],
-           makelist (lhs (e) = lmin (makelist (data_by_station[S]@TMIN[i], i, rhs (e))), e, ii));
-
-year (t) :=
-    block ([t_decoded: decode_time (t)],
-           t_decoded[7]);
-
-group_by_years (S) :=
-    block ([w: map (year, data_by_station[S]@DATE), u],
-           u: unique (w),
-           makelist (y1 = sublist_indices (w, lambda ([x], x = y1)), y1, u));
-
-tmax_by_years (S) :=
-    block ([ii: group_by_years (S), u],
-           makelist (lhs (e) = lmax (makelist (data_by_station[S]@TMAX[i], i, rhs (e))), e, ii));
-
-ymd_regex: regex_compile ("^\\s*(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)\\s*$");
-
-meteo_year_from_string (ymd) :=
-    block ([m: regex_match (ymd_regex, ymd)],
-           if m # false
-               then block ([yy: parse_string (m[2]), mm: parse_string (m[3])],
-                           if mm >= 9 then yy else yy - 1));
+construct_from_run_lengths (m, x) :=
+    (makelist (makelist (x[1 + mod (i - 1, length (x))], m[i]), i, 1, length (m)),
+     apply (append, %%));
+ *
+ */

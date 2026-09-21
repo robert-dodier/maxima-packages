@@ -1,0 +1,23 @@
+/* Maxima timedate doodads are Common Lisp universal times,
+ * which cannot be before 1900; a frankly ridiculous limitation.
+ * Load the local-time library and redefine parse_timedate to compensate.
+ * Would be a good idea to consider moving this into Maxima proper.
+ */
+
+load ("timedate-from-local-time.lisp");
+
+winter_year (t) :=
+    block ([t_decoded: decode_time (t)],
+           if t_decoded[6] >= 7 then t_decoded[7] else t_decoded[7] - 1);
+
+year (t) :=
+    block ([t_decoded: decode_time (t)],
+           t_decoded[7]);
+
+ymd_regex: regex_compile ("^\\s*(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)\\s*$");
+
+meteo_year_from_string (ymd) :=
+    block ([m: regex_match (ymd_regex, ymd)],
+           if m # false
+               then block ([yy: parse_string (m[2]), mm: parse_string (m[3])],
+                           if mm >= 9 then yy else yy - 1));
