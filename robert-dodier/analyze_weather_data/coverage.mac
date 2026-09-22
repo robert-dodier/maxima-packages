@@ -1,0 +1,49 @@
+coverage_analysis_1 (df, threshold) :=
+    block ([coverage, meets_threshold, meets_threshold_unnested, meets_threshold_runs,
+            meets_threshold_places_values_lengths, meets_threshold_runs_long_enough],
+           coverage_by_years: aggregate (group (df by "DATE_year") by coverage),
+           meets_threshold: aggregate (coverage_by_years by lambda ([x], map (lambda ([y], is (y >= threshold)), x))),
+           meets_threshold_unnested: unnest_nested_data_frame (%%),
+           meets_threshold_runs: aggregate (%% by find_runs),
+           meets_threshold_places_values_lengths: aggregate (%% by reconstruct_places_values_and_lengths),
+           meets_threshold_runs_long_enough: aggregate (%% by ensure_value_and_length[true, 10]));
+
+coverage (l) := if l # [] then float (length (sublist (l, lambda ([x], x # false))) / length (l));
+
+/* alternate implementation moved here from mutate.mac
+ *
+coverage (df) := aggregate (df by coverage1);
+
+coverage1 (l) := if l # [] then lsum (if x # false then 1 else 0, x, l) / length (l);
+ *
+ */
+
+/* rr is a list of runs structs (at least one), as returned by find_runs.
+ * Reconstruct the places at which runs start and return [place, length] pairs,
+ * ignoring values.
+ */
+
+reconstruct_places_values_and_lengths (rr) := map (reconstruct_places_values_and_lengths_1, rr);
+
+reconstruct_places_values_and_lengths_1 (r) :=
+   (accumulate ("+", r@lengths, 1),
+    by_threes (rest (%%, -1), r@values, r@lengths));
+
+by_threes (a, b, c) := map (lambda ([a1, b1, c1], [a1, b1, c1]), a, b, c);
+
+ensure_value_and_length [v, n] :=
+    buildq ([v, n], lambda ([ll], map (lambda ([l], ensure_value_and_length_1 (v, n, l)), ll)));
+
+ensure_value_and_length_1 (v, n, l) :=
+    sublist (l, lambda ([abc], abc[2] = v and abc[3] >= n));
+
+/* Assume that df here is the result of coverage_analysis_1 above. */
+
+sufficient_coverage (df) :=
+    (make_data_frame ([ "variables", "lengthy_runs" ], args (matrix_from_data_frame (df))),
+     select (%% by (lambda ([l], l # []) of "lengthy_runs")));
+
+/* At this point, df@data["variables"] is the list of variables meeting the coverage criterion,
+ * where df is the result of sufficient_coverage.
+ */
+

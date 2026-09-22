@@ -1,0 +1,28 @@
+matchdeclare ([aa, bb, ff], all);
+defmatch (select_m1, bb by (ff of aa));
+defmatch (select_m2, bb by aa);
+
+select (e) :=
+    block ([aa, bb, ff],
+           if select_m1 (e) # false
+               then select1 (aa, bb, ff)
+           elseif select_m2 (e) # false
+               then select1 (aa, bb, identity));
+
+select1 (aa, bb, ff) :=
+    if data_frame_p (bb)
+        then block ([h: make_hash_table (1), flags, ii],
+                    aa: if listp (aa) then aa else [aa],
+                    /* Construct a list of true/false flags,
+                     * then filter all columns by that list.
+                     */
+                    flags: apply (map, cons (ff, makelist (bb@data[a], a, aa))),
+                    ii: sublist_indices (flags, maybe),
+                    for x in bb@names
+                        do h[x]: makelist (bb@data[x][i], i, ii),
+                    data_frame (bb@names, h))
+    elseif nested_data_frame_p (bb)
+        then block ([h: make_hash_table (length (bb@names))],
+                    for [k, v] in bb@data
+                        do arraysetapply (h, k, select1 (aa, v, ff)),
+                    nested_data_frame (bb@names, h));

@@ -1,12 +1,8 @@
-load ("operatingsystem");
-
-if (input: getenv ("INPUT")) = false
-    then error ("analyze_weather_data.mac: environment variable INPUT not specified, with no default.");
-
-load ("partition_data");
-load ("mutate");
-
-data: read_data_frame_from_file (input, nonnumeric_columns = [ "STATION", "NAME", "DATE" ]);
+load ("year_utilities.mac");
+load ("partition_data.mac");
+load ("mutate.mac");
+load ("select.mac");
+load ("coverage.mac");
 
 /* Analyses:
  *
@@ -31,72 +27,25 @@ data: read_data_frame_from_file (input, nonnumeric_columns = [ "STATION", "NAME"
  *       precipitation > 1 inch for 1, 10, 30, and 100 year periods, as above, reported as number of days per year.
  */
 
-coverage_analysis_1 (df) :=
-    block ([coverage, meets_threshold, meets_threshold_unnested, meets_threshold_runs,
-            meets_threshold_places_values_lengths, meets_threshold_runs_long_enough],
-           coverage_by_years: aggregate (group (df by "DATE_year") by coverage),
-           meets_threshold: aggregate (coverage_by_years by lambda ([x], map (lambda ([y], is (y >= 0.9)), x))),
-           meets_threshold_unnested: unnest_nested_data_frame (%%),
-           meets_threshold_runs: aggregate (%% by find_runs),
-           meets_threshold_places_values_lengths: aggregate (%% by reconstruct_places_values_and_lengths),
-           meets_threshold_runs_long_enough: aggregate (%% by ensure_value_and_length[true, 10]));
+load ("operatingsystem");
 
-coverage (l) := if l # [] then float (length (sublist (l, lambda ([x], x # false))) / length (l));
+if (input: getenv ("INPUT")) = false
+    then error ("analyze_weather_data.mac: environment variable INPUT not specified, with no default.");
 
-/* rr is a list of runs structs (at least one), as returned by find_runs.
- * Reconstruct the places at which runs start and return [place, length] pairs,
- * ignoring values.
- */
+df: data_frame_from_file (input, nonnumeric_columns = ["STATION","NAME","DATE"]);
 
-reconstruct_places_values_and_lengths (rr) := map (reconstruct_places_values_and_lengths_1, rr);
+df1: mutate (df by ("DATE_parsed" = lambda([l], map (parse_timedate, l)) of "DATE"));
 
-reconstruct_places_values_and_lengths_1 (r) :=
-   (accumulate ("+", r@lengths, 1),
-    by_threes (rest (%%, -1), r@values, r@lengths));
+df1a: mutate (df1 by ("DATE_year" = lambda([l], map (year, l)) of "DATE_parsed"));
 
-by_threes (a, b, c) := map (lambda ([a1, b1, c1], [a1, b1, c1]), a, b, c);
+coverage_analysis_1 (df1a, 0.9);
+matrix_from_data_frame (%);
+coverage1: make_data_frame (["variables", "lengthy_runs"], args (%));
 
-ensure_value_and_length [v, n] :=
-    buildq ([v, n], lambda ([ll], map (lambda ([l], ensure_value_and_length_1 (v, n, l)), ll)));
+matrix_from_data_frame (coverage1);
 
-ensure_value_and_length_1 (v, n, l) :=
-    sublist (l, lambda ([abc], abc[2] = v and abc[3] >= n));
-    
-/* find_runs is already over in descriptive.mac, don't try to get this working.
- * sigh. i knew it sounded familiar, i just didn't remember where i put it.
- *
-find_runs[n] :=
-    buildq ([n], 
-        lambda ([l],
-                block ([changed, run_lengths, ii],
-                        changed: map (is, map ("#", rest (l, -1), rest (l))),
-                        ii: append ([1], 1 + sublist_indices (changed, identity), [length (l) + 1]),
-                        run_lengths: rest (ii) - rest (ii, -1),
-                        sublist (by_twos (rest (ii, -1), run_lengths), lambda ([i_m], second (i_m) >= n)))));
+coverage1_sufficient: select (coverage1 by (lambda ([l], l # []) of "lengthy_runs"));
 
-/* copied verbatim from plottable_steps.mac; maybe this should be generally available */
+matrix_from_data_frame (coverage1_sufficient);
 
-by_twos (a, b) :=
-    if length (b) # length (a)
-        then error ("by_twos: arguments not the same length.")
-        else map (lambda ([a1, b1], [a1, b1]), a, b);
-
-test_find_runs (n, ll) :=
-    block ([l, y],
-           verify_well_formed_runs (ll),
-           l: construct_from_run_lengths (map (second, ll), [0, 1]),
-           (y: find_runs[n](l)) = ll or error ("test_find_runs: given n =", n, "and ll =", ll, ", find_runs returned", y));
-
-verify_well_formed_runs (ll) :=
-    (ll = []
-        or ll[1][1] = 1
-               and every (lambda ([x], x >= 1), map (first, ll))
-               and every (lambda ([x], x >= 1), map (second, ll))
-               and every (lambda ([i], ll[i + 1][1] = ll[i][1] + ll[i][2]), makelist (i, i, 1, length (ll) - 1)))
-    or error ("verify_well_formed_runs:", ll, "is not a well-formed runs list.");
-
-construct_from_run_lengths (m, x) :=
-    (makelist (makelist (x[1 + mod (i - 1, length (x))], m[i]), i, 1, length (m)),
-     apply (append, %%));
- *
- */
+coverage1_sufficient@data["variables"];
