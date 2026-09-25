@@ -32,20 +32,38 @@ load ("operatingsystem");
 if (input: getenv ("INPUT")) = false
     then error ("analyze_weather_data.mac: environment variable INPUT not specified, with no default.");
 
-df: data_frame_from_file (input, nonnumeric_columns = ["STATION","NAME","DATE"]);
+/* I suppose ATTRIBUTES columns could maybe possibly be present for any data column;
+ * the ones listed here are just the ones which are present in the existing CSVs.
+ */
+
+df: data_frame_from_file (input, nonnumeric_columns = [ "STATION", "NAME", "DATE", "DAPR_ATTRIBUTES", "MDPR_ATTRIBUTES", "PRCP_ATTRIBUTES", "SNOW_ATTRIBUTES", "SNWD_ATTRIBUTES", "WESD_ATTRIBUTES", "WESF_ATTRIBUTES" ]);
 
 df1: mutate (df by ("DATE_parsed" = lambda([l], map (parse_timedate, l)) of "DATE"));
 
 df1a: mutate (df1 by ("DATE_year" = lambda([l], map (year, l)) of "DATE_parsed"));
 
-coverage_analysis_1 (df1a, 0.9);
-matrix_from_data_frame (%);
-coverage1: make_data_frame (["variables", "lengthy_runs"], args (%));
+df1a_by_STATION: group (df1a by "STATION");
 
-matrix_from_data_frame (coverage1);
+/* this next block of code could be replaced by a map-over-df operation
+ * (not the same as aggregate, which works on columns)
+ */
+coverage_table: make_array (hashed, 1);
+for [[station], station_df] in df1a_by_STATION@data
+    do (print ("process station", station, "..."),
+        coverage_table[station]: coverage_analysis_1 (station_df, 0.9));
+coverage_results: nested_data_frame ([ "STATION" ], coverage_table);
 
-coverage1_sufficient: select (coverage1 by (lambda ([l], l # []) of "lengthy_runs"));
+/* now print out results for each station */
 
-matrix_from_data_frame (coverage1_sufficient);
+for [[station], coverage_df] in coverage_results@data
+    do block ([coverage1, coverage1_sufficient],
+              
+              print (matrix_from_data_frame (coverage_df)),
 
-coverage1_sufficient@data["variables"];
+              coverage1: make_data_frame (["variables", "lengthy_runs"], args (%%)),
+              print (station = matrix_from_data_frame (coverage1)),
+
+              coverage1_sufficient: select (coverage1 by (lambda ([l], l # []) of "lengthy_runs")),
+
+              print (station = matrix_from_data_frame (coverage1_sufficient)),
+              print ("sufficient coverage for", station = coverage1_sufficient@data["variables"]));
