@@ -2,7 +2,6 @@ load ("year_utilities.mac");
 load ("partition_data.mac");
 load ("mutate.mac");
 load ("select.mac");
-load ("coverage.mac");
 
 /* Analyses:
  *
@@ -42,28 +41,36 @@ df1: mutate (df by ("DATE_parsed" = lambda([l], map (parse_timedate, l)) of "DAT
 
 df1a: mutate (df1 by ("DATE_year" = lambda([l], map (year, l)) of "DATE_parsed"));
 
-df1a_by_STATION: group (df1a by "STATION");
+floor10 (x) := 10 * floor (x / 10);
+floor100 (x) := 100 * floor (x / 100);
 
-/* this next block of code could be replaced by a map-over-df operation
- * (not the same as aggregate, which works on columns)
- */
-coverage_table: make_array (hashed, 1);
-for [[station], station_df] in df1a_by_STATION@data
-    do (print ("process station", station, "..."),
-        coverage_table[station]: coverage_analysis_1 (station_df, 0.9));
-coverage_results: nested_data_frame ([ "STATION" ], coverage_table);
+df1b: mutate (df1a by [ "DATE_decade" = lambda ([l], map (floor10, l)) of "DATE_year", "DATE_century" = lambda ([l], map (floor100, l)) of "DATE_year" ]);
+
+df1b_by_STATION: group (df1b by "STATION");
+
+precipitation_analysis_1 (df) := aggregate (group (select ([ "DATE_year", "PRCP" ] from df) by "DATE_year") by annualized_mean);
+precipitation_analysis_2 (df) := aggregate (group (select ([ "DATE_decade", "PRCP" ] from df) by "DATE_decade") by annualized_mean);
+precipitation_analysis_3 (df) := aggregate (group (select ([ "DATE_century", "PRCP" ] from df) by "DATE_century") by annualized_mean);
+
+annualized_mean (l) := if l # [] then 365.2425 * clean_mean (l);
+
+clean_mean (l) := block ([n], l: sublist (l, lambda ([x], x # false)), n: length (l), if n > 0 then lsum (x, x, l) / n);
+
+map_over_df (f, df) :=
+    block ([h: make_array (hashed, 1)],
+            for [[k], df1] in df@data
+                do (print ("map_over_df: process key", k, "..."),
+                    h[k]: f (df1)),
+            nested_data_frame (df@names, h));
+
+foo (df) := matrix_from_data_frame (unnest_nested_data_frame (df));
+
+precipitation_df_1: map_over_df (foo, map_over_df (precipitation_analysis_1, df1b_by_STATION));
+precipitation_df_2: map_over_df (foo, map_over_df (precipitation_analysis_2, df1b_by_STATION));
+precipitation_df_3: map_over_df (foo, map_over_df (precipitation_analysis_3, df1b_by_STATION));
 
 /* now print out results for each station */
 
-for [[station], coverage_df] in coverage_results@data
-    do block ([coverage1, coverage1_sufficient],
-              
-              print (matrix_from_data_frame (coverage_df)),
-
-              coverage1: make_data_frame (["variables", "lengthy_runs"], args (%%)),
-              print (station = matrix_from_data_frame (coverage1)),
-
-              coverage1_sufficient: select (coverage1 by (lambda ([l], l # []) of "lengthy_runs")),
-
-              print (station = matrix_from_data_frame (coverage1_sufficient)),
-              print ("sufficient coverage for", station = coverage1_sufficient@data["variables"]));
+map_over_df (print, precipitation_df_1);
+map_over_df (print, precipitation_df_2);
+map_over_df (print, precipitation_df_3);

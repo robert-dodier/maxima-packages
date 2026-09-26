@@ -1,28 +1,35 @@
-matchdeclare ([aa, bb, ff], all);
-defmatch (select_m1, bb by (ff of aa));
-defmatch (select_m2, bb by aa);
+matchdeclare ([aa, bb, cc, ff], all);
+infix ("from");
+defmatch (select_m1, (aa from bb) by (ff of cc));
+defmatch (select_m2, (aa from bb) by ff);
+defmatch (select_m3, aa from bb);
 
 select (e) :=
-    block ([aa, bb, ff],
+    block ([aa, bb, cc, ff],
            if select_m1 (e) # false
-               then select1 (aa, bb, ff)
+               then select1 (aa, bb, cc, ff)
            elseif select_m2 (e) # false
-               then select1 (aa, bb, identity));
+               then select1 (aa, bb, aa, ff)
+           elseif select_m3 (e) # false
+               then select1 (aa, bb, aa, true1));
 
-select1 (aa, bb, ff) :=
+true1 ([a]) := true;
+
+select1 (aa, bb, cc, ff) :=
     if data_frame_p (bb)
         then block ([h: make_hash_table (1), flags, ii],
                     aa: if listp (aa) then aa else [aa],
+                    cc: if listp (cc) then cc else [cc],
                     /* Construct a list of true/false flags,
-                     * then filter all columns by that list.
+                     * then filter columns aa by that list.
                      */
-                    flags: apply (map, cons (ff, makelist (bb@data[a], a, aa))),
+                    flags: apply (map, cons (ff, makelist (bb@data[c], c, cc))),
                     ii: sublist_indices (flags, maybe),
-                    for x in bb@names
+                    for x in aa
                         do h[x]: makelist (bb@data[x][i], i, ii),
-                    data_frame (bb@names, h))
+                    data_frame (aa, h))
     elseif nested_data_frame_p (bb)
         then block ([h: make_hash_table (length (bb@names))],
                     for [k, v] in bb@data
-                        do arraysetapply (h, k, select1 (aa, v, ff)),
+                        do arraysetapply (h, k, select1 (aa, v, cc, ff)),
                     nested_data_frame (bb@names, h));
