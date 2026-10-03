@@ -77,16 +77,26 @@ tellsimpafter (group (dd by ll), group_data_frame_by (dd, ll));
 group_data_frame_by (df, aa) :=
     if not every (lambda ([x], member (x, df@names)), aa)
         then error ("group: not every element of", aa, "is in the list of names", df@names)
-        else block ([h, uu, names_sans_aa, aa_values],
+        else block ([h, hh, names_sans_aa, aa_values, aa_ordering, aa_sorted, aa_runs, aa_runs_indices, aa_as_unique_indices],
+
+                    aa_values: reshape (makelist (df@data[a], a, aa), [any, length (aa)], by_columns),
+                    aa_ordering: ordering (aa_values),
+                    aa_sorted: permute (aa_ordering, aa_values),
+                    aa_runs: find_runs (aa_sorted),
+                    aa_runs_indices: find_runs_inverse (runs (aa_runs@lengths, makelist (i, i, 1, length (aa_runs@values)))),
+                    aa_as_unique_indices: permute (perm_inverse (aa_ordering), aa_runs_indices),
+
                     h: make_hash_table (length (aa)),
-                    uu: unique (reshape (makelist (df@data[a], a, aa), [any, length (aa)], by_columns)),
+                    hh: makelist (make_hash_table (1), length (aa_runs@values)),
+
                     names_sans_aa: df@names,
                     for a in aa do names_sans_aa: delete (a, names_sans_aa),
-                    aa_values: reshape (makelist (df@data[a], a, aa), [any, length (aa)], by_columns),
-                    for u in uu
-                        do block ([ii: sublist_indices (aa_values, lambda ([x], x = u)), ll],
-                                  ll: makelist (makelist (df@data[x][i], i, ii), x, names_sans_aa),
-                                  arraysetapply (h, u, make_data_frame (names_sans_aa, ll))),
+
+                    for b in names_sans_aa
+                        do block ([LL: sprinkle (length (aa_runs@values), aa_as_unique_indices, df@data[b])],
+                                  map (lambda ([h1, L1], h1[b]: L1), hh, LL)),
+
+                    map (lambda ([a1, h1], arraysetapply (h, a1, data_frame (names_sans_aa, h1))), aa_runs@values, hh),
                     nested_data_frame (aa, h));
 
 make_hash_table (n) :=
@@ -95,6 +105,11 @@ make_hash_table (n) :=
      * e.g. make_array(hashed, 1, 1) for two keys.
      */
     apply (make_array, cons (hashed, makelist (1, n)));
+
+sprinkle (n, ii, xx) :=
+    block ([L: makelist ([], n), simp: false],
+           map (lambda ([i, x], L[i]: cons (x, L[i])), ii, xx),
+           map (reverse, L));
 
 push ("../**/*.mac", file_search_maxima);
 push ("../**/*.lisp", file_search_lisp);

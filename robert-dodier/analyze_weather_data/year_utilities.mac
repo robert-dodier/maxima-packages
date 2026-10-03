@@ -14,6 +14,14 @@ year (t) :=
     block ([t_decoded: decode_time (t)],
            t_decoded[7]);
 
+month (t) :=
+    block ([t_decoded: decode_time (t)],
+           t_decoded[6]);
+
+day_of_month (t) :=
+    block ([t_decoded: decode_time (t)],
+           t_decoded[5]);
+
 ymd_regex: regex_compile ("^\\s*(\\d\\d\\d\\d)-(\\d\\d)-(\\d\\d)\\s*$");
 
 meteo_year_from_string (ymd) :=
