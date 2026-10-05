@@ -75,7 +75,7 @@ precipitation_analysis_1 (df) :=
           matrix_from_data_frame (%%));
 
 precipitation_analysis_2 (df, grouping_field, n_years) :=
-    block ([df1, df2, df3, df4, df5, h: make_array (hashed, 1)],
+    block ([df1, df2, df3, df4, df5, h: make_array (hashed, 1), c],
           df1: group (select ([grouping_field, "DATE_year", "PRCP"] from df) by "DATE_year"),
           for [[y], a] in df1@data
               do if (c: simple_annual_coverage (a@data["PRCP"])) >= 0.9 then h[y]: a

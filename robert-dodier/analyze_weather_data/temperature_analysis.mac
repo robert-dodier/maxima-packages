@@ -67,37 +67,37 @@ df1b_by_STATION: group (df1b by "STATION");
  * and can therefore be omitted.
  */
 
-temperature_analysis (df, grouping_field, f) :=
-    if grouping_field = "DATE_year"
-        then temperature_analysis_1 (df, f)
-        else temperature_analysis_2 (df, grouping_field, f);
+temperature_analysis (df, little_grouping_days, little_grouping_field, big_grouping_field, f) :=
+    if little_grouping_field = big_grouping_field
+        then temperature_analysis_1 (df, little_grouping_days, little_grouping_field, f)
+        else temperature_analysis_2 (df, little_grouping_days, little_grouping_field, big_grouping_field, f);
 
-temperature_analysis_1 (df, f) :=
+temperature_analysis_1 (df, grouping_days, grouping_field, f) :=
     block ([df1, df2, df3, h: make_array (hashed, 1), c],
-          df1: group (select (["DATE_year", "TMIN", "TMAX"] from df) by "DATE_year"),
+          df1: group (select ([grouping_field, "TMIN", "TMAX"] from df) by grouping_field),
           for [[y], a] in df1@data
               /* coverage of TMAX is almost certainly the same as for TMIN,
                * but compute both and look at the smaller one, on general principle.
                */
-              do if (c: min (simple_annual_coverage (a@data["TMIN"]), simple_annual_coverage (a@data["TMAX"]))) >= 0.9 then h[y]: a
+              do if (c: min (simple_annual_coverage (grouping_days, a@data["TMIN"]), simple_annual_coverage (grouping_days, a@data["TMAX"]))) >= 0.8 then h[y]: a
                      else print ("temperature_analysis_1: omit year", y, "(simple annual coverage =", c, ")"),
           df2: nested_data_frame (df1@names, h),
           df3: aggregate (df2 by f),
           unnest_nested_data_frame (df3),
           matrix_from_data_frame (%%));
 
-temperature_analysis_2 (df, grouping_field, f) :=
-    block ([df1, df2, df3, df4, df5, h: make_array (hashed, 1)],
-          df1: group (select ([grouping_field, "DATE_year", "TMIN", "TMAX"] from df) by "DATE_year"),
+temperature_analysis_2 (df, little_grouping_days, little_grouping_field, big_grouping_field, f) :=
+    block ([df1, df2, df3, df4, df5, h: make_array (hashed, 1), c],
+          df1: group (select ([big_grouping_field, little_grouping_field, "TMIN", "TMAX"] from df) by little_grouping_field),
           for [[y], a] in df1@data
               /* coverage of TMAX is almost certainly the same as for TMIN,
                * but compute both and look at the smaller one, on general principle.
                */
-              do if (c: min (simple_annual_coverage (a@data["TMIN"]), simple_annual_coverage (a@data["TMAX"]))) >= 0.9 then h[y]: a
+              do if (c: min (simple_annual_coverage (little_grouping_days, a@data["TMIN"]), simple_annual_coverage (little_grouping_days, a@data["TMAX"]))) >= 0.8 then h[y]: a
                      else print ("temperature_analysis_2: omit year", y, "(simple annual coverage =", c, ")"),
           df2: nested_data_frame (df1@names, h),
           df3: unnest_nested_data_frame (df2),
-          df4: group (select ([grouping_field, "TMIN", "TMAX"] from df3) by grouping_field),
+          df4: group (select ([big_grouping_field, "TMIN", "TMAX"] from df3) by big_grouping_field),
           df5: aggregate (df4 by f),
           unnest_nested_data_frame (df5),
           matrix_from_data_frame (%%));
@@ -106,9 +106,9 @@ temperature_analysis_2 (df, grouping_field, f) :=
  * Assess coverage as the proportion of nonmissing values per nominal year.
  */
 
-simple_annual_coverage (l) :=
+simple_annual_coverage (grouping_days, l) :=
     block ([n_not_missing: lsum (if x # false then 1 else 0, x, l)],
-           n_not_missing / 365.2425);
+           n_not_missing / grouping_days);
 
 clean (l) := sublist (l, lambda ([x], x # false));
 
@@ -129,14 +129,47 @@ foo (df) := matrix_from_data_frame (unnest_nested_data_frame (df));
 
 fpprintprec: 6;
 
-temperature_df_1: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, "DATE_year",  clean_mean)), df1b_by_STATION));
-temperature_df_10: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, "DATE_decade", clean_mean)), df1b_by_STATION));
-temperature_df_30: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, "DATE_30year", clean_mean)), df1b_by_STATION));
-temperature_df_100: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, "DATE_century", clean_mean)), df1b_by_STATION));
-
-/* now print out results for each station */
+temperature_df_1: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, 365.2425, "DATE_year", "DATE_year", clean_mean)), df1b_by_STATION));
+temperature_df_10: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, 365.2425, "DATE_year", "DATE_decade", clean_mean)), df1b_by_STATION));
+temperature_df_30: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, 365.2425, "DATE_year", "DATE_30year", clean_mean)), df1b_by_STATION));
+temperature_df_100: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, 365.2425, "DATE_year", "DATE_century", clean_mean)), df1b_by_STATION));
 
 map_over_df (print, temperature_df_1);
 map_over_df (print, temperature_df_10);
 map_over_df (print, temperature_df_30);
 map_over_df (print, temperature_df_100);
+
+temperature_df_1a: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, 365.2425/12, "DATE_month", "DATE_year", clean_mean)), df1b_by_STATION));
+temperature_df_10a: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, 365.2425/12, "DATE_month", "DATE_decade", clean_mean)), df1b_by_STATION));
+temperature_df_30a: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, 365.2425/12, "DATE_month", "DATE_30year", clean_mean)), df1b_by_STATION));
+temperature_df_100a: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, 365.2425/12, "DATE_month", "DATE_century", clean_mean)), df1b_by_STATION));
+
+map_over_df (print, temperature_df_1a);
+map_over_df (print, temperature_df_10a);
+map_over_df (print, temperature_df_30a);
+map_over_df (print, temperature_df_100a);
+
+temperature_df_1b: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, 365.2425/12, "DATE_month", "DATE_year", clean_range)), df1b_by_STATION));
+temperature_df_10b: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, 365.2425/12, "DATE_month", "DATE_decade", clean_range)), df1b_by_STATION));
+temperature_df_30b: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, 365.2425/12, "DATE_month", "DATE_30year", clean_range)), df1b_by_STATION));
+temperature_df_100b: map_over_df (foo, map_over_df (lambda ([df], temperature_analysis (df, 365.2425/12, "DATE_month", "DATE_century", clean_range)), df1b_by_STATION));
+
+map_over_df (print, temperature_df_1b);
+map_over_df (print, temperature_df_10b);
+map_over_df (print, temperature_df_30b);
+map_over_df (print, temperature_df_100b);
+
+label_pattern: regex_compile ("^%[a-z]([0-9][0-9]*)$");
+extract_label_number (s) := (regex_match (label_pattern, string (s)), if %% # false then %%[2]);
+
+(input_labels: labels (%i),
+ input_labels_numbers: map (parse_string, map (extract_label_number, input_labels)),
+ output_labels: labels (%o),
+ output_labels_numbers: map (parse_string, map (extract_label_number, output_labels)),
+ input_and_output_numbers: listify (intersection (setify (input_labels_numbers), setify (output_labels_numbers))),
+ input_labels_1: map (lambda ([n], concat (%i, n)), input_and_output_numbers),
+ input_exprs_1: map (?meval, input_labels_1),
+ output_labels_1: map (lambda ([n], concat (%o, n)), input_and_output_numbers),
+ output_times_1: apply (time, output_labels_1),
+ transpose (matrix (input_labels_1, map (lambda ([e], if atom (e) then e else op (e)), input_exprs_1), output_times_1)));
+
