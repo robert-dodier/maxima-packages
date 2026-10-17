@@ -69,10 +69,18 @@ infix ("by");
 
 matchdeclare (ll, listp);
 matchdeclare (dd, lambda ([e], not atom (e) and op (e) = 'data_frame));
+matchdeclare (nn, lambda ([e], not atom (e) and op (e) = 'nested_data_frame));
 matchdeclare (aa, atom);
+
+/* should rework this to implement group as a function plus defmatch;
+ * need to return false or trigger an error instead of unchanged expression
+ * when there's a match failure.
+ */
 
 tellsimpafter (group (dd by aa), group_data_frame_by (dd, [ aa ]));
 tellsimpafter (group (dd by ll), group_data_frame_by (dd, ll));
+tellsimpafter (group (nn by aa), group_nested_data_frame_by (nn, [ aa ]));
+tellsimpafter (group (nn by ll), group_nested_data_frame_by (nn, ll));
 
 group_data_frame_by (df, aa) :=
     if not every (lambda ([x], member (x, df@names)), aa)
@@ -110,6 +118,19 @@ sprinkle (n, ii, xx) :=
     block ([L: makelist ([], n), simp: false],
            map (lambda ([i, x], L[i]: cons (x, L[i])), ii, xx),
            map (reverse, L));
+
+/* Assume that grouping a nested data frame only groups the fields of the inner data frames,
+ * and does not group the grouping field of the outer data frame.
+ */
+
+group_nested_data_frame_by (df, aa) := map_over_df (buildq ([aa], lambda ([df1], group (df1 by aa))), df);
+
+map_over_df (f, df) :=
+    block ([h: make_array (hashed, 1)],
+            for [[k], df1] in df@data
+                do (print ("map_over_df: process key", k, "..."),
+                    h[k]: f (df1)),
+            nested_data_frame (df@names, h));
 
 push ("../**/*.mac", file_search_maxima);
 push ("../**/*.lisp", file_search_lisp);
