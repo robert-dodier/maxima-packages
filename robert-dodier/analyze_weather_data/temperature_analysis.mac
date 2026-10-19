@@ -38,7 +38,9 @@ if (input: getenv ("INPUT")) = false
 
 df: data_frame_from_file (input, nonnumeric_columns = [ "STATION", "NAME", "DATE", "DAPR_ATTRIBUTES", "MDPR_ATTRIBUTES", "PRCP_ATTRIBUTES", "SNOW_ATTRIBUTES", "SNWD_ATTRIBUTES", "WESD_ATTRIBUTES", "WESF_ATTRIBUTES" ]);
 
-df1: mutate (df by ("DATE_parsed" = lambda([l], map (parse_timedate, l)) of "DATE"));
+df0: select (["STATION", "DATE", "TMIN", "TMAX"] from df);
+
+df1: mutate (df0 by ("DATE_parsed" = lambda([l], map (parse_timedate, l)) of "DATE"));
 
 df1a: mutate (df1 by ("DATE_year" = lambda([l], map (year, l)) of "DATE_parsed"));
 
@@ -64,7 +66,7 @@ df1b_by_STATION: group (df1b by "STATION");
  * Assess coverage as the proportion of nonmissing values per nominal year.
  */
 
-simple_annual_coverage (grouping_days, l) :=
+simple_coverage (grouping_days, l) :=
     block ([n_not_missing: lsum (if x # false then 1 else 0, x, l)],
            n_not_missing / grouping_days);
 
@@ -77,33 +79,17 @@ defstruct (min_max (min, max));
 clean_range (l) := block ([n], l: clean (l), min_max (lmin (l), lmax (l)));
 
 /* For analysis of 1 year to multiple years, filter out years for which daily data coverage is less than 90%.
- * Implement that by grouping by years, filtering out years with insufficient coverage,
- * then ungrouping and regrouping for the specified number of years.
- * The last ungrouping/regrouping step is a no-op when the analysis period is one year
- * and can therefore be omitted.
  */
 
-FOO: block ([foo, h: make_array (hashed, 1)],
-            /* should group(... by ...) recognize nested data frame and carry out map_over_df itself? */
-            foo: map_over_df (lambda ([df], group (df by "DATE_year")), df1b_by_STATION),
-            /* this nested looping seems to call for a built-in operation for filtering ... */
-            for [[y], a] in foo@data
-                do block ([h: make_array (hashed, 1)],
-                          for [[z], b] in a@data
-                              /* coverage of TMAX is almost certainly the same as for TMIN,
-                               * but compute both and look at the smaller one, on general principle.
-                               */
-                              do block ([TMIN_coverage: simple_annual_coverage (365.2425, b@data["TMIN"]),
-                                         TMAX_coverage: simple_annual_coverage (365.2425, b@data["TMAX"])],
-                                        if (c: min (TMIN_coverage, TMAX_coverage)) >= 0.9 then h[z]: b
-                                            else print ("temperature_analysis: for station", y, "omit year", z, "(simple annual coverage =", c, ")")),
-                          nested_data_frame (a@names, h),
-                          unnest_nested_data_frame (%%),
-                          /* this next bit with arraysetapply is kind of terrible;
-                           * but foo@ata[y]: %% and (foo@data)[y]: %% both trigger "cannot assign to foo@data[y]".
-                           */
-                          arraysetapply (foo@data, [y], %%)),
-            foo);
+baz (df) :=
+    block ([baz1, baz2, baz3, baz4],
+           baz1: select (["DATE_year", "TMIN"] from df),
+           baz2: group (baz1 by "DATE_year"),
+           baz3: aggregate (baz2 by lambda ([x], simple_coverage (365.2425, x))),
+           /* this last bit seems needlessly clumsy ... */
+           baz4: select (df by (lambda ([y], baz3@data[y]@data["TMIN"][1] >= 0.9) of "DATE_year")));
+
+FOO: map_over_df (baz, df1b_by_STATION);
 
 temperature_analysis_1 (df, grouping_field, f) :=
     block ([df1, df2, df3],
@@ -120,7 +106,8 @@ temperature_analysis_2 (df, outer_grouping_field, inner_grouping_field, f) :=
           df2: group (select ([inner_grouping_field, "TMIN", "TMAX"] from df1) by inner_grouping_field),
           df3: aggregate (df2 by f));
 
-foo (df) := matrix_from_data_frame (map_over_df (unnest_nested_data_frame, df));
+foo1 (df) := matrix_from_data_frame (map_over_df (unnest_nested_data_frame, df));
+foo2 (df) := matrix_from_data_frame (map_over_df (lambda ([df1], map_over_df (unnest_nested_data_frame, df1)), df));
 
 fpprintprec: 6;
 
@@ -129,20 +116,20 @@ temperature_df_10: map_over_df (lambda ([df], temperature_analysis_1 (df, "DATE_
 temperature_df_30: map_over_df (lambda ([df], temperature_analysis_1 (df, "DATE_30year", clean_mean)), FOO);
 temperature_df_100: map_over_df (lambda ([df], temperature_analysis_1 (df, "DATE_century", clean_mean)), FOO);
 
-foo (temperature_df_1);
-foo (temperature_df_10);
-foo (temperature_df_30);
-foo (temperature_df_100);
+foo1 (temperature_df_1);
+foo1 (temperature_df_10);
+foo1 (temperature_df_30);
+foo1 (temperature_df_100);
 
 temperature_df_1a: map_over_df (lambda ([df], temperature_analysis_2 (df, "DATE_month", "DATE_year", clean_mean)), FOO);
 temperature_df_10a: map_over_df (lambda ([df], temperature_analysis_2 (df, "DATE_month", "DATE_decade", clean_mean)), FOO);
 temperature_df_30a: map_over_df (lambda ([df], temperature_analysis_2 (df, "DATE_month", "DATE_30year", clean_mean)), FOO);
 temperature_df_100a: map_over_df (lambda ([df], temperature_analysis_2 (df, "DATE_month", "DATE_century", clean_mean)), FOO);
 
-foo (temperature_df_1a);
-foo (temperature_df_10a);
-foo (temperature_df_30a);
-foo (temperature_df_100a);
+foo2 (temperature_df_1a);
+foo2 (temperature_df_10a);
+foo2 (temperature_df_30a);
+foo2 (temperature_df_100a);
 
 label_pattern: regex_compile ("^%[a-z]([0-9][0-9]*)$");
 extract_label_number (s) := (regex_match (label_pattern, string (s)), if %% # false then %%[2]);
