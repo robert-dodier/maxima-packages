@@ -25,7 +25,11 @@ select1 (aa, bb, cc, ff) :=
     if data_frame_p (bb)
         then block ([h: make_hash_table (1), flags, ii],
                     aa: if listp (aa) then aa elseif aa = false then bb@names else [aa],
+                    if not every (lambda ([x], member (x, bb@names)), aa)
+                        then error ("select: all selected fields must be present in data frame; fields absent:", setdifference (setify (aa), setify (bb@names))),
                     cc: if listp (cc) then cc else [cc],
+                    if not every (lambda ([x], member (x, bb@names)), cc)
+                        then error ("select: all fields for selection predicate must be present in data frame; fields absent:", setdifference (setify (cc), setify (bb@names))),
                     /* Construct a list of true/false flags,
                      * then filter columns aa by that list.
                      */

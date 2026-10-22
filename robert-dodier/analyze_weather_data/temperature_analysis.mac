@@ -30,7 +30,8 @@ load ("select.mac");
 load ("operatingsystem");
 
 if (input: getenv ("INPUT")) = false
-    then error ("temperature_analysis.mac: environment variable INPUT not specified, with no default.");
+    then error ("temperature_analysis: environment variable INPUT not specified, with no default.")
+    else print ("temperature_analysis: process input =", input) $
 
 /* I suppose ATTRIBUTES columns could maybe possibly be present for any data column;
  * the ones listed here are just the ones which are present in the existing CSVs.
