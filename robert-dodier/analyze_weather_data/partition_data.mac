@@ -125,6 +125,8 @@ sprinkle (n, ii, xx) :=
 
 group_nested_data_frame_by (df, aa) := map_over_df (buildq ([aa], lambda ([df1], group (df1 by aa))), df);
 
+/* hmm, I wonder if the function f should take two arguments: outer key and df, instead of just df. Something to think about. */
+
 map_over_df (f, df) :=
     block ([h: make_array (hashed, 1)],
             for [[k], df1] in df@data
