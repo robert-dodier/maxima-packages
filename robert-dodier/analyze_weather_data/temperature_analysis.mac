@@ -105,10 +105,11 @@ temperature_analysis_1 (df, grouping_field, f) :=
           df3: unnest_nested_data_frame (df2));
 
 temperature_analysis_2 (df, outer_grouping_field, inner_grouping_field, f) :=
-    block ([df1, df2, df3, df4, df5],
+    block ([df1, df2, df3, df4],
           df1: group (select ([outer_grouping_field, inner_grouping_field, "TMIN", "TMAX"] from df) by outer_grouping_field),
           df2: group (select ([inner_grouping_field, "TMIN", "TMAX"] from df1) by inner_grouping_field),
-          df3: aggregate (df2 by f));
+          df3: aggregate (df2 by f),
+          df4: map_over_df (unnest_nested_data_frame, df3));
 
 foo1 (df) := matrix_from_data_frame (map_over_df (unnest_nested_data_frame, df));
 foo2 (df) := matrix_from_data_frame (map_over_df (lambda ([df1], map_over_df (unnest_nested_data_frame, df1)), df));
@@ -127,27 +128,34 @@ foo1 (temperature_df_100);
 
 plot_nested_df (dt_nominal, df) :=
     /* put each station on a separate plot; might reconsider and put them all on one plot, I'll have to think it over. */
-    for [[key], df1] in df@data
-        do plot_nested_df_1 (dt_nominal, df@names[1], key, df1);
+    for [[key1], df1] in df@data
+        do if nested_data_frame_p (df1)
+               then for [[key2], df2] in df1@data
+                        do plot_nested_df_1 (dt_nominal, [ df@names[1], df1@names[1] ], [ key1, key2 ], df2)
+           elseif data_frame_p (df1)
+               then plot_nested_df_1 (dt_nominal, [ df@names[1] ], [ key1 ], df1);
 
-plot_nested_df_1 (dt_nominal, key_field, key_value, df1) :=
+plot_nested_df_1 (dt_nominal, key_fields, key_values, df1) :=
     /* assume first field is a time column;
      * plot second and following fields one at a time against the first.
      */
-    block ([times: df1@data [df1@names[1]], all_plottable_steps, svg_file_name, station_name],
+    block ([times: df1@data [df1@names[1]], all_plottable_steps, svg_file_name, station_name, key_value_string_1, key_value_string_2],
            all_plottable_steps: makelist (plottable_steps_breaking_gaps (dt_nominal, times, df1@data[x]), x, rest (df1@names)),
-           svg_file_name: printf (false, "./plot-nested-df-~a-~a-~{~a~^-~}-by-~a.svg", key_field, key_value, rest (df1@names), first (df1@names)),
+           key_value_string_1: printf (false, "~{~a~^-~}", map (lambda ([k, v], printf (false, "~a-~a", k, v)), key_fields, key_values)),
+           svg_file_name: printf (false, "./plot-nested-df-~a-~{~a~^-~}-by-~a.svg", key_value_string_1, rest (df1@names), first (df1@names)),
            print ("temperature_analysis: output plot to", svg_file_name),
 
            /* I tried to avoid assumptions about what fields are what, but I don't see how to avoid naming names here.
             * Maybe, for convenience, build a short data frame to map station IDs to station names.
             */
-           station_name: first (df1b_by_STATION@data[key_value]@data["NAME"]),
+           station_name: first (df1b_by_STATION@data[first (key_values)]@data["NAME"]),
+
+           key_value_string_2: printf (false, "~{~a~^, ~}", map (lambda ([k, v], printf (false, "~a ~a", k, v)), key_fields, key_values)),
 
            plot2d (makelist ([discrete, pp], pp, all_plottable_steps),
                    ['x, first (times) - dt_nominal / 4, last (times) + dt_nominal + dt_nominal / 4],
                    ['y, y_min_for_plotting, y_max_for_plotting],
-                   [title, printf (false, "~a ~a by ~a\\n(~a)", key_field, key_value, first (df1@names), station_name)],
+                   [title, printf (false, "~a by ~a\\n(~a)", key_value_string_2, first (df1@names), station_name)],
                    [xlabel, first (df1@names)],
                    cons ('legend, rest (df1@names)),
                    [svg_file, svg_file_name]));
@@ -182,6 +190,11 @@ foo2 (temperature_df_1a);
 foo2 (temperature_df_10a);
 foo2 (temperature_df_30a);
 foo2 (temperature_df_100a);
+
+plot_nested_df (1, temperature_df_1a);
+plot_nested_df (10, temperature_df_10a);
+plot_nested_df (30, temperature_df_30a);
+plot_nested_df (100, temperature_df_100a);
 
 label_pattern: regex_compile ("^%[a-z]([0-9][0-9]*)$");
 extract_label_number (s) := (regex_match (label_pattern, string (s)), if %% # false then %%[2]);
